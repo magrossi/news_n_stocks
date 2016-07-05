@@ -30,13 +30,16 @@ def tokenize(raw, max_size = 1):
     - Expands contractions
     - Splits raw text by sentence and converts text to lowercase
     - Lemmatizes words based on position (better than stemming)
-    >>> list(tokenizer(u'My super text. It's awesome!', 3))
+    >>> list(tokenize(u'My super text. It's awesome!', 3))
     [u'super', u'text', u'super text', u'awesome']
     '''
     # load expensive imports only once even if you call the function multiple times
     # http://blender.stackexchange.com/questions/2665/how-can-i-do-a-one-time-initialization
     # answer by: ideasman42
     if tokenize.pre_load is None:
+        # logs initialization
+        import logging
+        logging.debug('initializing tokenize...')
         tokenize.pre_load = {}
         # stopwords dictionary
         from nltk.corpus import stopwords
@@ -53,6 +56,7 @@ def tokenize(raw, max_size = 1):
         # lemmatizer.lemmatize('cooking', pos='v')
         # use nltk.pos_tag() then convert using get_wordnet_pos()
         # must analyze the structure of the sentence first
+        logging.debug('tokenize initialized')
 
     # returns word ngrams up to max_size
     for sentence in tokenize.pre_load['sent_tokenizer'].tokenize(raw):
@@ -66,4 +70,8 @@ def tokenize(raw, max_size = 1):
         for i in range(2, max_size + 1):
             for w in ngrams(words, i):
                 yield ' '.join(w)
+
 tokenize.pre_load = None
+
+if __name__ == "__main__":
+    print list(tokenize(u'My super text. It\'s awesome!', 3))

@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 import json, sys, os, time, datetime, re, logging, string
 from tokenizer import tokenize
-from pymongo import MongoClient
 from itertools import chain, islice
 from collections import Counter
-
-def _get_mongo_collection(mongo_server = 'mongodb://localhost:27017/', db_name = 'news_db', collection_name = 'docs'):
-    client = MongoClient(mongo_server)
-    db = client[db_name]
-    return db[collection_name]
 
 def _process_file(filename, source, date_format, fixed_tags=[], ngram_size=1):
     try:
@@ -47,7 +41,7 @@ def _process_file(filename, source, date_format, fixed_tags=[], ngram_size=1):
 
 def _get_term_frequencies(tokens):
     '''
-    returns a sorted list of term frequencies tuples [ ('term': frequency), .. ]
+    returns a sorted list of sorted term frequencies tuples [ ('term': frequency), .. ]
     '''
     return list(Counter(tokens).most_common())
 
@@ -74,13 +68,43 @@ def _chunks(iterable, size=100):
     for first in iterator:
         yield list(chain([first], islice(iterator, size - 1)))
 
-def main(argv):
-    """
-    """
-    start_time = time.time()
+class InputItem(object):
+    '''
+    helper class to hold input configuration
+    '''
+    def __init__(self, dir, source='', tags=[], date_format='%Y-%m-%d', file_match_regex='(?i).*(\.json)$'):
+        self.dir = dir
+        self.source = source
+        self.tags = tags
+        self.date_format = date_format
+        self.regex = file_match_regex
 
+    def get_conf(self):
+        return (self.dir, self.source, self.tags, self.date_format, self.regex)
+
+def process_items(inputs, mongo_collection, ngram_size=1, insert_after=1000):
+    logging.info('starting to process %d items', len(inputs))
+    start_total_time = time.time()
+    total_inserted = 0
+    for dir, source, tags, date_format, regex in map((lambda i: i.get_conf()), inputs):
+        partial_inserted = 0
+        try:
+            start_time = time.time()
+            logging.info('processing item [dir: %s, source: %s, tags: %s, date_format: %s, regex: %s', dir, source, tags, date_format, regex)
+            for chunk in _chunks(_process_all_files(dir, source, date_format, tags, ngram_size, regex), insert_after):
+                res = mongo_collection.insert_many(chunk)
+                logging.info('inserted %d items into db', len(res.inserted_ids))
+                partial_inserted += len(res.inserted_ids)
+            logging.info('finished processing %d items on dir %s in %f seconds, avg of %f seconds per item', total_inserted, dir, time.time() - start_time, partial_inserted if partial_inserted <= 0 else (time.time() - start_time)/partial_inserted)
+        except Exception, e:
+            logging.error('failed processing dir %s with error %s after %f seconds', dir, e.message, time.time() - start_time)
+        total_inserted += partial_inserted
+    logging.info('finished processing %d items for all dirs in %f seconds', total_inserted, time.time() - start_total_time)
+
+if __name__ == "__main__":
+    # configure logger
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
-
+    # test config params
     input_dir = 'D:/Study/DCU/MCM/Datasets/nytimes/raw_data/sundayreview'
     ngram_size = 1
     filename_regex = '(?i).*(\.json)$'
@@ -90,16 +114,12 @@ def main(argv):
     mongo_server = 'mongodb://localhost:27017/'
     db_name = 'test_news_db2'
     collection_name = 'docs'
-    chunk_size = 1000
 
-    db = _get_mongo_collection(mongo_server, db_name, collection_name)
-    # insert many chunk in chunk until the iterable is consumed
-    logging.info('processing folder %s', input_dir)
-    for chunk in _chunks(_process_all_files(input_dir, source, date_format, fixed_tags, ngram_size, filename_regex), chunk_size):
-        res = db.insert_many(chunk)
-        logging.info('inserted %d items into db', len(res.inserted_ids))
+    # get mongo collection to insert results to
+    from pymongo import MongoClient
+    client = MongoClient(mongo_server)
+    db = client[db_name]
+    coll = db[collection_name]
 
-    logging.info('finished processing in %f seconds', time.time() - start_time)
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+    # process all
+    process_items([InputItem(dir=input_dir, source=source, tags=fixed_tags, date_format=date_format, file_match_regex=filename_regex)], coll, ngram_size=3, insert_after=1000)

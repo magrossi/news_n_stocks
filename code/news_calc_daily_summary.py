@@ -1,6 +1,5 @@
-import logging, sys, time
+import logging, time, datetime
 from bson.code import Code
-from pymongo import MongoClient
 
 def _mapper():
     return Code("""
@@ -52,26 +51,29 @@ def _get_mongo_collection(mongo_server = 'mongodb://localhost:27017/', db_name =
     db = client[db_name]
     return db[collection_name]
 
-def main(argv):
-    """
-    """
+def calculate_daily_summary(mongo_collection, result_collection_name, filter={}):
     start_time = time.time()
-
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
-
-    mongo_server = 'mongodb://localhost:27017/'
-    db_name = 'test_news_db2'
-    collection_name = 'docs'
-    mr_collection_name = 'daily_summary'
-
-    logging.info('getting collection from database')
-    db = _get_mongo_collection(mongo_server, db_name, collection_name)
-
-    logging.info('applying map reduce')
-    result = db.map_reduce(_mapper(), _reducer(), mr_collection_name, full_response=True)
-
+    logging.info('applying map reduce with filter %s', filter)
+    result = mongo_collection.map_reduce(_mapper(), _reducer(), result_collection_name, query=filter, full_response=True)
     logging.info(result)
     logging.info('finished processing in %f seconds', time.time() - start_time)
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
+
+    from pymongo import MongoClient
+    mongo_server = 'mongodb://localhost:27017/'
+    db_name = 'test_news_db2'
+    collection_name = 'docs'
+    mr_collection_name = 'daily_summary'
+    filter = {
+        'date': {
+            '$gte': datetime.datetime(2000, 01, 01),
+            '$lt': datetime.datetime(2100, 01, 02)
+        }
+    }
+
+    client = MongoClient(mongo_server)
+    db = client[db_name]
+    coll = db[collection_name]
+    calculate_daily_summary(coll, mr_collection_name, filter)
