@@ -5,53 +5,67 @@ def _mapper():
     return Code("""
             function () {
                 var date = this.date,
-                    count = 0;
+                    count = 0,
+                    id = this._id;
                 this.bag_of_words.forEach(function (w) {
-                    w.push(this._id) // add doc id for counting doc number later
-                    emit(date, w);   // w = [term, freq, doc_id]
+                    w.push(id);    // add doc id for counting doc number later
+                    emit(date, w); // w = [term, freq, doc_id]
                 });
             }
             """)
 
 def _reducer():
     return Code("""
-            function (dt, term_freqs) {
-                var d = { date: dt, doc_count: 0, term_freq: [] },
-                    unique_docs = {},
-                    dic_terms = {};
+            function (dt, tfs) {
+                var d = { date: dt, total_docs: 0, total_terms: 0, term_counts: {} },
+                    unique_docs = {};
                 // calculate the daily term frequencies and number of docs
-                term_freqs.forEach(function (tf) {
-                    // term frequencies
-                    if (dic_terms[tf[0]]) {
-                        dic_terms[tf[0]] += tf[1];
+                tfs.forEach(function (tf) {
+                    var term = tf[0],
+                        freq = tf[1],
+                        doc_id = tf[2];
+                    // term frequencies (in corpus and docs it appears in)
+                    if (d.term_counts[term]) {
+                        d.term_counts[term][0] += freq;
+                        d.term_counts[term][1] += 1;
                     } else {
-                        dic_terms[tf[0]] = tf[1];
+                        d.term_counts[term] = [freq, 1, 0]; // last pos will be calculated later
                     }
+                    // count total term count
+                    d.total_terms++;
                     // count distinct documents
-                    if (!unique_docs[tf[2]]) {
-                        d.doc_count++;
-                    } else {
-                        unique_docs[tf[2]] = 1 // so its not "falsy"
+                    if (!unique_docs[doc_id]) {
+                        d.total_docs++;
+                        unique_docs[doc_id] = true;
                     }
                 });
-                // trim down resulting term list to 5000 (otherwise too much useless data)
-                // copy dictionary to array
-                var array_terms = [];
-                for (var term in dic_terms) array_terms.push([term, dic_terms[term]]);
-                // sort array desc
-                array_terms.sort(function(a, b) { return b[1] - a[1]; });
-                // take first 5000
-                d.term_freq = array_terms.slice(0, 5000);
+                // calculate the tf-idf (daily) per term
+                for (var term in d.term_counts) {
+                    var tf = d.term_counts[term][0] / d.total_terms,
+                        idf = Math.log(d.total_docs/d.term_counts[term][1]);
+                    d.term_counts[term][2] = tf * idf;
+                }
                 return d;
             }
             """)
 
-def _get_mongo_collection(mongo_server = 'mongodb://localhost:27017/', db_name = 'news_db', collection_name = 'docs'):
-    client = MongoClient(mongo_server)
-    db = client[db_name]
-    return db[collection_name]
-
 def calculate_daily_summary(mongo_collection, result_collection_name, filter={}):
+    '''
+    Calculates the daily summary from mongo_collection and produces a document of the format:
+    {
+        _id: date,
+        value: {
+            date: date,
+            total_docs: total docs in date,
+            total_terms: total terms in date,
+            term_counts: {
+                term: [frequency, doc frequency, tfidf score],
+                ...
+            }
+        }
+    }
+    Saves the results into result_collection_name.
+    '''
     start_time = time.time()
     logging.info('applying map reduce with filter %s', filter)
     result = mongo_collection.map_reduce(_mapper(), _reducer(), result_collection_name, query=filter, full_response=True)
@@ -77,3 +91,4 @@ if __name__ == "__main__":
     db = client[db_name]
     coll = db[collection_name]
     calculate_daily_summary(coll, mr_collection_name, filter)
+    pass
