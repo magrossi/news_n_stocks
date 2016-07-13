@@ -1,0 +1,1 @@
+Sample news data from the NY Time "Sunday Review" section.
