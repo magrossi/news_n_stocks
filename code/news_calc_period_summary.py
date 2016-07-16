@@ -43,15 +43,18 @@ def calculate_period_summary(input_collection, output_collection, period_type, m
                 terms[term][1] += counts[1] # doc frequency
             else:
                 terms[term] = counts # tfidf score will be overritten later
-    terms_arr = []
-    for term, counts in terms.iteritems():
-        tf = counts[0] / summ['total_terms']
-        idf = math.log(summ['total_docs'] / counts[1])
-        terms_arr.append([term, counts[0], counts[1], tf * idf])
-    summ['term_counts'] = heapq.nlargest(max_terms, terms_arr, key=lambda x: x[3])
-    logging.info('total of %d documents processed', ct)
-    logging.info('saving to out collection...')
-    output_collection.insert(summ)
+    if ct > 0:
+        terms_arr = []
+        for term, counts in terms.iteritems():
+            tf = counts[0] / summ['total_terms']
+            idf = math.log(summ['total_docs'] / counts[1])
+            terms_arr.append([term, counts[0], counts[1], tf * idf])
+        summ['term_counts'] = heapq.nlargest(max_terms, terms_arr, key=lambda x: x[3])
+        logging.info('total of %d documents processed', ct)
+        logging.info('saving to out collection...')
+        output_collection.insert(summ)
+    else:
+        logging.info('no documents found on interval')
     logging.info('finished processing in %f seconds', time.time() - start_time)
 
 if __name__ == "__main__":

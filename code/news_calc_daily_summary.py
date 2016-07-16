@@ -1,49 +1,65 @@
 import logging, time, datetime
 from bson.code import Code
+from bson.son import SON
 
 def _mapper():
     return Code("""
             function () {
-                var date = this.date,
-                    count = 0,
-                    id = this._id;
+                var key = this.date,
+                    doc = {};
+                doc[this._id] = true;
                 this.bag_of_words.forEach(function (w) {
-                    w.push(id);    // add doc id for counting doc number later
-                    emit(date, w); // w = [term, freq, doc_id]
+                    //w.push(id);    // add doc id for counting doc number later
+                    //emit(date, { terms: [w] }); // w = [term, freq, doc_id]
+                    var term = {};
+                    term[w[0]] = [w[1], 1];
+                    emit(key, { terms : term, docs: doc });
                 });
             }
             """)
 
 def _reducer():
     return Code("""
-            function (dt, tfs) {
-                var d = { date: dt, total_docs: 0, total_terms: 0, term_counts: {} },
-                    unique_docs = {};
-                // calculate the daily term frequencies and number of docs
-                tfs.forEach(function (tf) {
-                    var term = tf[0],
-                        freq = tf[1],
-                        doc_id = tf[2];
-                    // term frequencies (in corpus and docs it appears in)
-                    if (d.term_counts[term]) {
-                        d.term_counts[term][0] += freq;
-                        d.term_counts[term][1] += 1;
-                    } else {
-                        d.term_counts[term] = [freq, 1, 0]; // last pos will be calculated later
-                    }
-                    // count total term count
-                    d.total_terms++;
-                    // count distinct documents
-                    if (!unique_docs[doc_id]) {
-                        d.total_docs++;
-                        unique_docs[doc_id] = true;
-                    }
-                });
+            function (dt, values) {
+                var a = values[0],
+                    b;
+                for (var i = 1; i < values.length; i++) {
+                    b = values[i];
+                    // aggregate the terms
+                    Object.keys(b.terms).forEach(function(k) {
+                        if (k in a.terms) {
+                            a.terms[k][0] += b.terms[k][0];
+                            a.terms[k][1] += b.terms[k][1];
+                        } else {
+                            a.terms[k] = b.terms[k];
+                        }
+
+                    });
+                    // aggregate the docs
+                    Object.keys(b.docs).forEach(function(k) {
+                        if (!(k in a.docs)) {
+                            a.docs[k] = true;
+                        }
+                    });
+                }
+                return a;
+            }
+            """)
+
+def _finalizer():
+    return Code("""
+            function (dt, summary) {
+                var d = {
+                        date: dt,
+                        total_docs: Object.keys(summary.docs).length,
+                        total_terms: Object.keys(summary.terms).length,
+                        term_counts: summary.terms
+                    };
                 // calculate the tf-idf (daily) per term
-                for (var term in d.term_counts) {
-                    var tf = d.term_counts[term][0] / d.total_terms,
-                        idf = Math.log(d.total_docs/d.term_counts[term][1]);
-                    d.term_counts[term][2] = tf * idf;
+                for (var key in d.term_counts) {
+                    var tf = d.term_counts[key][0] / d.total_terms,
+                        idf = Math.log(d.total_docs/d.term_counts[key][1]);
+                    d.term_counts[key].push(tf * idf);
                 }
                 return d;
             }
@@ -68,7 +84,7 @@ def calculate_daily_summary(mongo_collection, result_collection_name, filter={})
     '''
     start_time = time.time()
     logging.info('applying map reduce with filter %s', filter)
-    result = mongo_collection.map_reduce(_mapper(), _reducer(), result_collection_name, query=filter, full_response=True)
+    result = mongo_collection.map_reduce(_mapper(), _reducer(), out=SON([('merge', result_collection_name),]), query=filter, finalize=_finalizer(), full_response=True)
     logging.info(result)
     logging.info('finished processing in %f seconds', time.time() - start_time)
 
