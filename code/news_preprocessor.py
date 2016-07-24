@@ -4,7 +4,7 @@ from tokenizer import tokenize
 from itertools import chain, islice
 from collections import Counter
 
-def _process_file(filename, source, date_format, fixed_tags=[], ngram_size=1):
+def _process_file(filename, source, date_format, fixed_tags=[], ngram_sizes=[1]):
     try:
         with open(filename, 'rb') as f:
             # Load article in JSON format
@@ -33,7 +33,7 @@ def _process_file(filename, source, date_format, fixed_tags=[], ngram_size=1):
                 'tags': fixed_tags,
                 'title': data['title'],
                 'url': data['url'],
-                'bag_of_words': _get_term_frequencies(tokenize(data['text'], ngram_size))
+                'bag_of_words': _get_term_frequencies(tokenize(data['text'], ngram_sizes))
             }
     except Exception, e:
         logging.error('processing %s with error %s', filename, e.message)
@@ -51,11 +51,11 @@ def _get_files_to_process(initial_dir, match_regex=None, recursive=True):
             if match_regex is None or re.search(match_regex, f):
                 yield os.path.join(root, f)
 
-def _process_all_files(initial_dir, source, date_format, fixed_tags=[], ngram_size=1, match_regex=None, recursive=True):
+def _process_all_files(initial_dir, source, date_format, fixed_tags=[], ngram_sizes=[1], match_regex=None, recursive=True):
     processed = 0
     errored = 0
     for filename in _get_files_to_process(initial_dir, match_regex, recursive):
-        doc = _process_file(filename, source, date_format, fixed_tags, ngram_size)
+        doc = _process_file(filename, source, date_format, fixed_tags, ngram_sizes)
         if doc is not None and len(doc['bag_of_words']) > 0:
             yield doc
             processed += 1
@@ -82,7 +82,7 @@ class InputItem(object):
     def get_conf(self):
         return (self.dir, self.source, self.tags, self.date_format, self.regex)
 
-def process_items(inputs, mongo_collection, ngram_size=1, insert_after=1000):
+def process_items(inputs, mongo_collection, ngram_sizes=[1], insert_after=1000):
     logging.info('starting to process %d items', len(inputs))
     start_total_time = time.time()
     total_inserted = 0
@@ -91,7 +91,7 @@ def process_items(inputs, mongo_collection, ngram_size=1, insert_after=1000):
         try:
             start_time = time.time()
             logging.info('processing item [dir: %s, source: %s, tags: %s, date_format: %s, regex: %s', dir, source, tags, date_format, regex)
-            for chunk in _chunks(_process_all_files(dir, source, date_format, tags, ngram_size, regex), insert_after):
+            for chunk in _chunks(_process_all_files(dir, source, date_format, tags, ngram_sizes, regex), insert_after):
                 res = mongo_collection.insert_many(chunk)
                 logging.info('inserted %d items into db', len(res.inserted_ids))
                 partial_inserted += len(res.inserted_ids)
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
     # test config params
     input_dir = 'D:/Study/DCU/MCM/Datasets/nytimes/raw_data/sundayreview'
-    ngram_size = 1
+    ngram_sizes = [1,2,3]
     filename_regex = '(?i).*(\.json)$'
     date_format = '%Y-%m-%d' # date_format = '%Y-%m-%d' if has_time else '%Y-%m-%d %H:%M:%S'
     source = 'nytimes'
@@ -122,4 +122,4 @@ if __name__ == "__main__":
     coll = db[collection_name]
 
     # process all
-    process_items([InputItem(dir=input_dir, source=source, tags=fixed_tags, date_format=date_format, file_match_regex=filename_regex)], coll, ngram_size=3, insert_after=1000)
+    process_items([InputItem(dir=input_dir, source=source, tags=fixed_tags, date_format=date_format, file_match_regex=filename_regex)], coll, ngram_size=ngram_sizes, insert_after=1000)

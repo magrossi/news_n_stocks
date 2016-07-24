@@ -23,14 +23,14 @@ def _isValid(word):
     # is it worth removing it?
     return True
 
-def tokenize(raw, max_size = 1):
-    ''' Tokenizes raw text into word ngrams up to max_size.
+def tokenize(raw, sizes = [1]):
+    ''' Tokenizes raw text into word n-grams of sizes (n in sizes).
     Applies normal pre-processing techniques:
     - Removes stopwords and words with length smaller than three
     - Expands contractions
     - Splits raw text by sentence and converts text to lowercase
     - Lemmatizes words based on position (better than stemming)
-    >>> list(tokenize(u'My super text. It's awesome!', 3))
+    >>> list(tokenize(u'My super text. It's awesome!', [1,2,3]))
     [u'super', u'text', u'super text', u'awesome']
     '''
     # load expensive imports only once even if you call the function multiple times
@@ -64,14 +64,12 @@ def tokenize(raw, max_size = 1):
         raw_words = [w for w in word_tokenize(RegexpReplacer().replace(sentence.lower())) if len(w) > 3 and w not in tokenize.pre_load['stopwords'] and _isValid(w)]
         # tag words and lemmatize (instead of stemming)
         words = [tokenize.pre_load['lemmatizer'].lemmatize(tw[0], pos=_get_wordnet_pos(tw[1])) for tw in pos_tag(raw_words)]
-        # then return 1 to max_size-grams of the resulting bag of words
-        for w in words: # yield from only in python 3
-            yield w
-        for i in range(2, max_size + 1):
+        # then return ngrams of sizes of the resulting bag of words
+        for i in sizes:
             for w in ngrams(words, i):
                 yield ' '.join(w)
 
 tokenize.pre_load = None
 
 if __name__ == "__main__":
-    print list(tokenize(u'My super text. It\'s awesome!', 3))
+    print list(tokenize(u'My super text. It\'s awesome! Be careful of terrorist attacks!', [2, 3]))

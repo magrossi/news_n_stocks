@@ -88,7 +88,7 @@ coll = db[collection_name]
 calculate_daily_summary(coll, mr_collection_name, filter={}) # you can inform mongo-like filter here
 ```
 
-### Consolidate Daily Summaries into Period Summaries (daily)
+### Consolidate Daily Summaries into Period Summaries
 
 ###### First check available dates on your database to facilitate the process
 ```js
@@ -115,6 +115,7 @@ Then use the dates to calculate the daily period summaries. Any period summary c
 import logging, datetime
 from news_calc_period_summary import calculate_period_summary
 from pymongo import MongoClient
+from dateutil.relativedelta import relativedelta
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
@@ -129,11 +130,27 @@ coll = db[collection_name]
 out_coll = db[out_collection_name]
 
 start = datetime.datetime(2013,01,01)
-end = datetime.datetime(2014,10,20)
-date_generated = [start + datetime.timedelta(days=x) for x in range(0, (end-start).days)]
+end = datetime.datetime(2014,10,19)
 
-for date in date_generated:
-    calculate_period_summary(coll, out_coll, 'daily', 1000, {'_id': { '$eq': date }})
+# create all period summaries (daily, weekly, monthly, yearly)
+curr = end
+while curr >= start:
+    # daily
+    calculate_period_summary(coll, out_coll, 'daily', curr, curr, 1000, {'_id': { '$eq': curr  }})
+    # weekly
+    past_week = curr - datetime.timedelta(days=7)
+    if past_week >= start:
+      calculate_period_summary(coll, out_coll, 'weekly', past_week, curr, 1000, {'_id': { '$gt': past_week, '$lte': curr }})
+    # monthly
+    past_month = curr - relativedelta(months=1)
+    if past_month >= start:
+      calculate_period_summary(coll, out_coll, 'monthly', past_month, curr, 1000, {'_id': { '$gt': past_month, '$lte': curr }})
+    # yearly
+    past_year = curr - relativedelta(years=1)
+    if past_year >= start:
+      calculate_period_summary(coll, out_coll, 'yearly', past_year, curr, 1000, {'_id': { '$gt': past_year, '$lte': curr }})
+    # decrease current day
+    curr -= datetime.timedelta(days=1)
 ```
 
 ### Generate time series data for any terms (ngram)

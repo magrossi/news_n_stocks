@@ -1,4 +1,4 @@
-import logging, time, datetime, math, heapq
+import logging, time, datetime, math, heapq, pandas as pd
 from bson.code import Code
 
 def get_tfidf_ts(input_collection, terms, filter):
@@ -9,18 +9,23 @@ def get_tfidf_ts(input_collection, terms, filter):
     logging.info('finding term time series with %s', filter)
     cursor = input_collection.find(filter)
     ct = 0
-    ts = {}
+    data = {}  # data for ts of term
+    idx = {} # index for ts of term
+    # build data and index arrays
     for term in terms:
-        ts[term] = []
+        idx[term] = []
+        data[term] = []
     for dsum in cursor:
         ct += 1
         for term in terms:
             if term in dsum['value']['term_counts']:
-                data_point = dsum['value']['term_counts'][term] # counts = [count, doc_count, tfidf]
-                data_point.insert(0, dsum['value']['date'])
-                ts[term].append(data_point)
-    # return dic with { term: [tseries], term: [tseries], ..}
-    return ts
+                data[term].append(dsum['value']['term_counts'][term]) # counts = [count, doc_count, tfidf]
+                idx[term].append(dsum['value']['date']) # index date
+    # build pandas dataframe out of previously calcualted arrays
+    dfs = {}
+    for term in terms:
+        dfs[term] = pd.DataFrame(data[term], index=idx[term], columns=['Count', 'Document Count', 'TF-IDF Score'])
+    return pd.Panel(dfs)
     logging.info('finished processing %d documents in %f seconds', ct, time.time() - start_time)
 
 if __name__ == "__main__":
@@ -44,7 +49,7 @@ if __name__ == "__main__":
     terms = ['night', 'day']
 
     logging.debug('testing get_tfidf_ts function for terms %s', ', '.join(terms))
-    ts = get_tfidf_ts(coll, terms, filter)
-    logging.debug(ts)
+    panel = get_tfidf_ts(coll, terms, filter)
+    logging.debug(panel)
 
     pass

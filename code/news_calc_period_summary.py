@@ -1,14 +1,16 @@
 import logging, time, datetime, math, heapq
 from bson.code import Code
 
-def calculate_period_summary(input_collection, output_collection, period_type, max_terms=1000, filter={}):
+def calculate_period_summary(input_collection, output_collection, period_type, period_start, period_end, max_terms=1000, filter={}):
     '''
     Merges daily summary type documents into a merged document of the format:
     {
         _id: <auto>,
         period_type: 'daily', // daily, weekly, monthly, bi-yearly, yearly,.. custom..
-        period_start: <min date>,
-        period_end: <max date>,
+        period_start: period_start,
+        period_end: period_end,
+        actual_start: <min date>,
+        actual_end: <max date>,
         total_docs: <total docs in period>,
         total_terms: <total terms in period>,
         term_counts: [        // sorted by tfidf score and limited to 'n' top entries
@@ -19,13 +21,15 @@ def calculate_period_summary(input_collection, output_collection, period_type, m
     Saves the results into result_collection_name.
     '''
     start_time = time.time()
-    logging.info('finding daily summaries with filter %s ', filter)
+    logging.info('finding %s summaries with filter %s ', period_type, filter)
     cursor = input_collection.find(filter)
     ct = 0
     summ = {
         'period_type': period_type,
-        'period_start': datetime.datetime.max,
-        'period_end': datetime.datetime.min,
+        'period_start': period_start,
+        'period_end': period_end,
+        'actual_start': datetime.datetime.max,
+        'actual_end': datetime.datetime.min,
         'total_docs': 0,
         'total_terms': 0,
         'term_counts': []
@@ -33,8 +37,8 @@ def calculate_period_summary(input_collection, output_collection, period_type, m
     terms = {}
     for dsum in cursor:
         ct += 1
-        summ['period_start'] = summ['period_start'] if summ['period_start'] < dsum['value']['date'] else dsum['value']['date']
-        summ['period_end'] = summ['period_end'] if summ['period_end'] > dsum['value']['date'] else dsum['value']['date']
+        summ['actual_start'] = summ['actual_start'] if summ['actual_start'] < dsum['value']['date'] else dsum['value']['date']
+        summ['actual_end'] = summ['actual_end'] if summ['actual_end'] > dsum['value']['date'] else dsum['value']['date']
         summ['total_docs'] += dsum['value']['total_docs']
         summ['total_terms'] += dsum['value']['total_terms']
         for term, counts in dsum['value']['term_counts'].iteritems():
@@ -65,10 +69,12 @@ if __name__ == "__main__":
     db_name = 'test_news_db2'
     collection_name = 'daily_summary'
     out_collection_name = 'period_summary'
+    start = datetime.datetime(2000, 01, 01)
+    end = datetime.datetime(2100, 01, 02)
     filter = {
-        '_id': {
-            '$gte': datetime.datetime(2000, 01, 01),
-            '$lt': datetime.datetime(2100, 01, 02)
+        '_id' : {
+            '$gte': start,
+            '$lte': end
         }
     }
 
@@ -76,5 +82,5 @@ if __name__ == "__main__":
     db = client[db_name]
     coll = db[collection_name]
     out_coll = db[out_collection_name]
-    calculate_period_summary(coll, out_coll, 'all', 10, filter)
+    calculate_period_summary(coll, out_coll, 'all', start, end, 100)
     pass
