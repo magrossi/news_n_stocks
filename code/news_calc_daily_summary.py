@@ -9,8 +9,6 @@ def _mapper():
                     doc = {};
                 doc[this._id] = true;
                 this.bag_of_words.forEach(function (w) {
-                    //w.push(id);    // add doc id for counting doc number later
-                    //emit(date, { terms: [w] }); // w = [term, freq, doc_id]
                     var term = {};
                     term[w[0]] = [w[1], 1];
                     emit(key, { terms : term, docs: doc });

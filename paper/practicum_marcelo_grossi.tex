@@ -35,26 +35,21 @@ In order to maximize the expectation of news having an influence on stock prices
 Each news article \(a\) was converted from raw unstructured textual data to a computer-friendly representation, in the form of a vector of term and related frequency \(f\), where a term \(t\) is a word n-gram (for this experiment 1 and 2-grams were used). This format is also commonly known as bag-of-words.
 \[a=[(t_1,f_1),(t_2,f_2),..,(t_n,f_n)]\]
 \par
-To transform the unstructured text into the bag-of-words format a series of sequential transformations were applied.
-\begin{enumerate}
-\item Contractions are expanded, i.e, \textit{it's} \(\to\) \textit{it is}.
-\item English stop words removal.
-\item Sentence separation (so n-grams bigger than 1 can only be generated if they came from the same sentence).
-\item Word tokenization (transform sentence in a sequence of words).
-\item Tagging of words position in the sentence -- if word is adjective, subject, verb, etc.
-\item Word lemmatization; by using the word position extract its lemma, i.e., \textit{saw, verb} \(\to\) \textit{see} or \textit{saw, subject} \(\to\) \textit{saw}.
-\item Generation of n-grams, i.e., given that \(W_{s1}=[w_1,w_2,..,w_n]\) is a set of words from sentence 1, the 2-grams would be of the form \([(w_1,w_2),(w_2,w_3),..,(w_{n-1},w_n)]\). 
-\end{enumerate}
+To transform the unstructured text into the bag-of-words format a series of sequential transformations were applied. Contractions are expanded, i.e, \textit{it's} \(\to\) \textit{it is}; english stop words are removed; sentences are separated (so n-grams bigger than 1 can only be generated if they came from the same sentence); word tokenization (transform sentence \(s\) in a collection of words \(W_s\)); tagging of words position in the sentence -- if word is adjective, subject, verb, etc.; word lemmatization (through word position extracted earlier, calculate its lemma, i.e., \textit{saw, verb} \(\to\) \textit{see} or \textit{saw, subject} \(\to\) \textit{saw}); and finally generation of n-grams -- i.e., given that \(W_{s_1}=[w_1,w_2,..,w_n]\) is a set of words from sentence 1, the 2-grams collection would be of the form \([w_1 w_2,w_2 w_3,..,w_{n-1} w_n]\).
 \par
-Metadata about each article was also stored
-.. Text summarization
-1. Daily TF-IDF
-2. Period TF-IDF
- 
-.. Text to time-series
-1. Daily term TF-IDF to time-series
-\section{Implementation}
+After pre-processing, each news article \(a \in A\) has been grouped by the date \(d\) in which they were published and a daily summary was produced whereby a score was assigned to each n-gram following the term frequency inverse document frequency (TF-IDF) algorithm. This score is calculated by multiplying the n-gram frequency (number of times n-gram \(t\) appears in all of \(A_d\) over the total number of n-grams in \(A_d\), \(T_{A_d}\)) by the log of the inverse of the document frequency (inverse of the number of articles \(a\) that n-gram \(t\) appears in, over the total number of articles in \(A_d\)). Another way of understanding the \(tfidf_{t_d}\) is that it expresses the relative importance of n-gram \(t\) over the course of day \(d\). So even if a term (or n-gram) appears in most documents with a very high count (high \(tf\)), it will get heavily penalized by the \(idf\), where \(0 \leq tfidf_t\). Although the score is unbounded in its upper limits, it is expected that in an unbiased big collection of articles, this value stays close to \(0\).
+From the daily summaries obtained through \(tfidf\) it becomes straight forward to calculate a time series \(TS\) for any n-gram \(t\) given a set of all days \(D_{start \to end}\) between days \(d_{start}\) and \(d_{end}\).
+\[TS_t=\forall{tfidf_{t_{d_i}}},\] where \(d_i \in D_{start \to end}\).
 \section{Evaluation}
+tell how granger test works.
+
+tell how to match term ts and stock.
+
+present results with examples of stocks and terms that were found.
+
+do prediction of day + 1 using the news relationship using at least two methods (arima and pattern dtw).
+
+compare predictions with baseline index.
 \section{Conclusion}
 \bibliography{practicum_marcelo_grossi}
 \end{document}
