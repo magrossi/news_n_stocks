@@ -15,9 +15,46 @@ This work assumes the strong efficient market hypothesis which dictates that the
 \par
 As recent terrorist events have shown, some tend to be local with regard to stock market impact, others have more global ramifications.  This technique allow us to differentiate and localize the impact of a given new piece. Many other applications for this work can be thought of including, but not limited to a trade system that tries to anticipate price movements based on news repercussion and grouping of stocks that have similar news influencers but are not necessarily in the same market sector (discovery of non-obvious stock clustering).
 \end{abstract}
-\section{First Section}
-\section{Second Section}
-\section{Third Section}
-\section{Conclusions}
+\section{Introduction}
+The relationship of news articles and stock price movement have been studied for several years. The most prevalent methodology of relating news articles to stock prices is by capturing the investor sentiment \citep{Handbook} from the textual information (if it is positive, negative or neutral) and assigning a probability of whether the stock prices were likely to move upwards, downwards or stay the same. 
+\par
+Sentiment can also be understood as the informational value of news and can be interpreted in several ways, such as lexical analysis of the text \citep{GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK} (by use of financial dictionaries for analysing positive terms versus negative terms i.e., `profit' and `exceeds' versus `bankrupt' and `loss'); or via machine learning and natural language processing techniques \citep{GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK} (supervised learning via expert annotated corpus); or a mixed model \citep{GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK} whereby the researchers build a sentiment index that can be correlated to an underlying asset \citep{GRAN ORIGINAL CITATION - PAGE 10 HANDBOOK}.
+\par
+These sentiment-based techniques are very promising and show strong correlation with stock price movement, but it is unclear how this relationship comes to be.
+\par
+This paper tries to contribute with a different approach to the analysis of the relationship between relevant terms in a textual corpus and stock prices. By computing the relative importance of a term over time using the term frequency inverse document frequency \citep{TF-IDF paper} weights, it allows for the ability to use regular tools for time series analysis which abstracts away the difficulties of dealing with textual data directly.
+\par
+To evaluate this model a Granger causality test \citep{GRANGER TEST} was used to assess the predictive power of the news time series over the stock price series. This test is performed between the top \(n\) most relevant terms of the day against the full set of stock prices. So the question posed is inverted; instead of asking `does this piece of news influence my stock?' we assume that news has influence over prices, and try to find `what stocks will be influenced by the current news state?'.
+\par
+After selecting the terms \(t\), and stock \(s\) tuples for a given day \(d\) a naive model is tested whereby the price of day \(d+1\) is predicted and compared with the actual price.
+\section{Data sources}
+Online news articles from the New York Times (\url{http://www.nytimes.com/}) was used as the textual corpus of this research. Around 50,000 business-related news articles were scraped from the period between January 1\textsuperscript{st}, 2013 and October 19\textsuperscript{th}, 2014. As one of the most respected news media outlets in the world, the New York Times should provide a sufficiently good breadth of market relevant information for analysing news impact on stock prices. More specialized news providers that could potentially outperform the current data source come at a very high price tag and were not considered for this research.
+\par
+In order to maximize the expectation of news having an influence on stock prices, this data had to come from the same region as the news provider. Therefore, only stocks traded on the New York Stock Exchange were considered and daily price information was gathered for a period that encompasses completely the news articles database date range.
+\section{From text to time series}
+Each news article \(a\) was converted from raw unstructured textual data to a computer-friendly representation, in the form of a vector of term and related frequency \(f\), where a term \(t\) is a word n-gram (for this experiment 1 and 2-grams were used). This format is also commonly known as bag-of-words.
+\[a=[(t_1,f_1),(t_2,f_2),..,(t_n,f_n)]\]
+\par
+To transform the unstructured text into the bag-of-words format a series of sequential transformations were applied.
+\begin{enumerate}
+\item Contractions are expanded, i.e, \textit{it's} \(\to\) \textit{it is}.
+\item English stop words removal.
+\item Sentence separation (so n-grams bigger than 1 can only be generated if they came from the same sentence).
+\item Word tokenization (transform sentence in a sequence of words).
+\item Tagging of words position in the sentence -- if word is adjective, subject, verb, etc.
+\item Word lemmatization; by using the word position extract its lemma, i.e., \textit{saw, verb} \(\to\) \textit{see} or \textit{saw, subject} \(\to\) \textit{saw}.
+\item Generation of n-grams, i.e., given that \(W_{s1}=[w_1,w_2,..,w_n]\) is a set of words from sentence 1, the 2-grams would be of the form \([(w_1,w_2),(w_2,w_3),..,(w_{n-1},w_n)]\). 
+\end{enumerate}
+\par
+Metadata about each article was also stored
+.. Text summarization
+1. Daily TF-IDF
+2. Period TF-IDF
+ 
+.. Text to time-series
+1. Daily term TF-IDF to time-series
+\section{Implementation}
+\section{Evaluation}
+\section{Conclusion}
 \bibliography{practicum_marcelo_grossi}
 \end{document}
