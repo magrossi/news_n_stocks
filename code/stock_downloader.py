@@ -1,4 +1,5 @@
-import logging, datetime, time, pandas.io.data as web
+import logging, datetime, time
+import pandas_datareader.data as web
 
 def download_stock_history(start_date, end_date, stocks, source='yahoo'):
     start_total_time = time.time()
@@ -7,7 +8,7 @@ def download_stock_history(start_date, end_date, stocks, source='yahoo'):
         data = web.DataReader(stocks, source, start_date, end_date)
         return data
     except Exception, e:
-        logging.error('error processing stock %s with error %s', stock, e.message)
+        logging.error('error processing with error %s', e.message)
         return
     finally:
         logging.info('finished processing in %f seconds', time.time() - start_total_time)
@@ -20,3 +21,4 @@ if __name__ == "__main__":
     start = datetime.datetime(2013,01,01)
     end = datetime.datetime(2014,10,20)
     stock_data = download_stock_history(start, end, stocks)
+    pass
