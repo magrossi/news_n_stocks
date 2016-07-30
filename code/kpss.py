@@ -7,7 +7,7 @@ import numpy as np
 import statsmodels.api as sm
 from scipy.interpolate import interp1d
 
-def kpssTest(x, regression="LEVEL",lshort = True):
+def kpssTest(x, regression = "LEVEL", lshort = True, verbose = True):
     """
     KPSS Test for Stationarity
 
@@ -17,8 +17,8 @@ def kpssTest(x, regression="LEVEL",lshort = True):
     ----------
     x : array_like, 1d
         data series
-    regression : str {'LEVEL','TREND'} 
-        Indicates the null hypothesis and must be one of "Level" (default) or "Trend". 
+    regression : str {'LEVEL','TREND'}
+        Indicates the null hypothesis and must be one of "Level" (default) or "Trend".
     lshort : bool
         a logical indicating whether the short or long version of the truncation lag parameter is used.
 
@@ -34,7 +34,7 @@ def kpssTest(x, regression="LEVEL",lshort = True):
     Notes
     -----
     Based on kpss.test function of tseries libraries in R.
-    
+
     To estimate sigma^2 the Newey-West estimator is used. If lshort is TRUE, then the truncation lag parameter is set to trunc(3*sqrt(n)/13), otherwise trunc(10*sqrt(n)/14) is used. The p-values are interpolated from Table 1 of Kwiatkowski et al. (1992). If the computed statistic is outside the table of critical values, then a warning message is generated.
 
     Missing values are not handled.
@@ -45,10 +45,10 @@ def kpssTest(x, regression="LEVEL",lshort = True):
 
     Examples
     --------
-    x=numpy.random.randn(1000)  #   is level stationary    
+    x=numpy.random.randn(1000)  #   is level stationary
     kpssTest(x)
 
-    y=numpy.cumsum(x)           # has unit root    
+    y=numpy.cumsum(x)           # has unit root
     kpssTest(y)
 
     z=x+0.3*arange(1,len(x)+1)   # is trend stationary
@@ -84,20 +84,21 @@ def kpssTest(x, regression="LEVEL",lshort = True):
         l=np.trunc(10*np.sqrt(n)/14)
     usedlag =int(l)
     s2=R_pp_sum(e,len(e),usedlag ,s2)
-    
+
     stat=eta/s2
 
     pvalue , msg=approx(table, tablep, stat)
-    
-    print "KPSS Test for ",regression," Stationarity\n"
-    print ("KPSS %s=%f" % (regression, stat))
-    print ("Truncation lag parameter=%d"% usedlag )
-    print ("p-value=%f"%pvalue )
 
-    if msg is not None:
-        print "\nWarning:",msg 
-    
-    return ( stat,pvalue , usedlag )
+    if verbose:
+        print "KPSS Test for ",regression," Stationarity\n"
+        print ("KPSS %s=%f" % (regression, stat))
+        print ("Truncation lag parameter=%d"% usedlag )
+        print ("p-value=%f"%pvalue )
+
+        if msg is not None:
+            print "\nWarning:",msg
+
+    return ( stat, pvalue, usedlag )
 
 
 def R_pp_sum (u, n, l, s):
@@ -108,7 +109,7 @@ def R_pp_sum (u, n, l, s):
             tmp2 += u[j]*u[j-i]
         tmp2 = tmp2*(1.0-(float(i)/((float(l)+1.0))))
         tmp1 = tmp1+tmp2
-    
+
     tmp1 = tmp1/float(n)
     tmp1 = tmp1*2.0
     return s + tmp1
@@ -118,9 +119,7 @@ def approx(x,y,v):
         return (y[0],"p-value smaller than printed p-value")
     if (v<x[-1]):
         return (y[-1],"p-value greater than printed p-value")
-    
+
     f=interp1d(x,y)
     av=f(v)
-    return (av,None) 
-
-
+    return (av,None)
