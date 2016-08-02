@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.7.25)  26 JUL 2016 22:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.7.25)  2 AUG 2016 01:09
 entering extended mode
 **practicum_marcelo_grossi.tex
 (practicum_marcelo_grossi.tex
@@ -188,7 +188,16 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 Missing character: There is no â in font cmr9!
 Missing character: There is no € in font cmr9!
 Missing character: There is no ™ in font cmr9!
- [1
+
+
+Package natbib Warning: Citation `GRAB CITATION FROM OLD NEWS ANALYSIS' on page
+ 1 undefined on input line 19.
+
+
+Package natbib Warning: Citation `FIND HERE' on page 1 undefined on input line 
+19.
+
+[1
 
 
 
@@ -196,62 +205,59 @@ pdfTeX warning: pdflatex (file pdftex.map): cannot open font map file
 ]
 
 Package natbib Warning: Citation `GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK' on pa
-ge 2 undefined on input line 21.
-
-
-Package natbib Warning: Citation `GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK' on pa
-ge 2 undefined on input line 21.
-
-
-Package natbib Warning: Citation `GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK' on pa
-ge 2 undefined on input line 21.
+ge 2 undefined on input line 22.
 
 
 Package natbib Warning: Citation `GRAN ORIGINAL CITATION - PAGE 10 HANDBOOK' on
- page 2 undefined on input line 21.
+ page 2 undefined on input line 22.
 
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ³ in font cmr10!
 
-Package natbib Warning: Citation `TF-IDF paper' on page 2 undefined on input li
-ne 25.
+Package natbib Warning: Citation `TFIDF paper' on page 2 undefined on input lin
+e 33.
 
 
 Package natbib Warning: Citation `GRANGER TEST' on page 2 undefined on input li
-ne 27.
+ne 35.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 27.
+(Font)              <7> on input line 35.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 27.
-[2] [3] (practicum_marcelo_grossi.bbl)
+(Font)              <5> on input line 35.
+[2] [3] (practicum_marcelo_grossi.bbl
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ³ in font cmr10!
+)
 
 Package natbib Warning: There were undefined citations.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 55.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 64.
 [4]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 55.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 64.
  (practicum_marcelo_grossi.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 55.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 55.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 64.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 64.
 Package rerunfilecheck Info: File `practicum_marcelo_grossi.out' has not change
 d.
 (rerunfilecheck)             Checksum: 8B52C951CD688E84D13C29E19E4F7441;248.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 55.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 64.
  ) 
 Here is how much of TeX's memory you used:
- 4601 strings out of 493636
- 68197 string characters out of 3143750
- 149954 words of memory out of 3000000
- 7983 multiletter control sequences out of 15000+200000
+ 4612 strings out of 493636
+ 68411 string characters out of 3143750
+ 151033 words of memory out of 3000000
+ 7992 multiletter control sequences out of 15000+200000
  8709 words of font info for 31 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 29i,6n,28p,1100b,319s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 29i,6n,28p,1328b,325s stack positions out of 5000i,500n,10000p,200000b,50000s
  <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\cm\dpi600\
 cmmi5.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\cm\
 dpi600\cmsy7.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\pub
 lic\cm\dpi600\cmr5.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts\pk\ljfo
 ur\public\cm\dpi600\cmsy10.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts
-\pk\ljfour\public\cm\dpi600\cmti10.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2
-.9\fonts\pk\ljfour\public\cm\dpi600\cmmi7.pk> <C:\Users\Marcelo\AppData\Local\M
+\pk\ljfour\public\cm\dpi600\cmmi7.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.
+9\fonts\pk\ljfour\public\cm\dpi600\cmti10.pk> <C:\Users\Marcelo\AppData\Local\M
 iKTeX\2.9\fonts\pk\ljfour\public\cm\dpi600\cmr7.pk> <C:\Users\Marcelo\AppData\L
 ocal\MiKTeX\2.9\fonts\pk\ljfour\public\cm\dpi600\cmtt10.pk> <C:\Users\Marcelo\A
 ppData\Local\MiKTeX\2.9\fonts\pk\ljfour\public\cm\dpi600\cmmi10.pk> <C:\Users\M
@@ -263,9 +269,9 @@ m\dpi600\cmr9.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\pu
 blic\cm\dpi600\cmbx9.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\fonts\pk\lj
 four\public\cm\dpi600\cmr12.pk> <C:\Users\Marcelo\AppData\Local\MiKTeX\2.9\font
 s\pk\ljfour\public\cm\dpi600\cmr17.pk>
-Output written on practicum_marcelo_grossi.pdf (4 pages, 121545 bytes).
+Output written on practicum_marcelo_grossi.pdf (4 pages, 128416 bytes).
 PDF statistics:
- 424 PDF objects out of 1000 (max. 8388607)
- 15 named destinations out of 1000 (max. 500000)
+ 443 PDF objects out of 1000 (max. 8388607)
+ 17 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

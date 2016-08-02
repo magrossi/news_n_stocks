@@ -24,14 +24,14 @@ from pymongo import MongoClient
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
-input_dir = 'your_input_dir'
-ngram_size = 1 # generate word ngrams up to ngram_size
+input_dir = 'D:/Study/DCU/MCM/Datasets/nytimes/raw_data/'
+ngram_size = [1,2]
 filename_regex = '(?i).*(\.json)$'
 date_format = '%Y-%m-%d'
 source = 'nytimes' # example of source metadata
 
 mongo_server = 'mongodb://localhost:27017/'
-db_name = 'news' # name of mongo database
+db_name = 'news2' # name of mongo database
 collection_name = 'docs' # name of mongo collection to save into
 
 client = MongoClient(mongo_server)
@@ -50,7 +50,7 @@ for idx, (folder, tag) in enumerate(folders_tags):
   input_items.append(InputItem(dir=input_dir+folder, source=source, tags=[tag], date_format=date_format, file_match_regex=filename_regex))
 
 # inserts documents into MongoDB after insert_after documents have been produced in memory
-process_items(input_items, coll, ngram_size=ngram_size, insert_after=1000)
+process_items(input_items, coll, ngram_sizes=ngram_size, insert_after=1000)
 
 ```
 This will save the documents into a MongoDB collection in the format below.
@@ -77,7 +77,7 @@ from news_calc_daily_summary import calculate_daily_summary
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
 mongo_server = 'mongodb://localhost:27017/'
-db_name = 'news' # name of mongo database
+db_name = 'news2' # name of mongo database
 collection_name = 'docs' # name of mongo collection to save into
 mr_collection_name = 'daily_summary' # name of mongo collection to output daily summaries into
 
@@ -120,7 +120,7 @@ from dateutil.relativedelta import relativedelta
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 
 mongo_server = 'mongodb://localhost:27017/'
-db_name = 'news'
+db_name = 'news2'
 collection_name = 'daily_summary'
 out_collection_name = 'period_summary'
 

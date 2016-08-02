@@ -1,26 +1,26 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: practicum_marcelo_grossi.aux
 The style file: IEEEtranN.bst
-White space in argument---line 24 of file practicum_marcelo_grossi.aux
+White space in argument---line 23 of file practicum_marcelo_grossi.aux
  : \citation{GRAB
- :                ORIGINAL CITATIONPAGE 10 HANDBOOK}
+ :                CITATION FROM OLD NEWS ANALYSIS}
 I'm skipping whatever remains of this command
 White space in argument---line 25 of file practicum_marcelo_grossi.aux
- : \citation{GRAB
- :                ORIGINAL CITATIONPAGE 10 HANDBOOK}
-I'm skipping whatever remains of this command
-White space in argument---line 26 of file practicum_marcelo_grossi.aux
- : \citation{GRAB
- :                ORIGINAL CITATIONPAGE 10 HANDBOOK}
+ : \citation{FIND
+ :                HERE}
 I'm skipping whatever remains of this command
 White space in argument---line 27 of file practicum_marcelo_grossi.aux
+ : \citation{GRAB
+ :                ORIGINAL CITATIONPAGE 10 HANDBOOK}
+I'm skipping whatever remains of this command
+White space in argument---line 28 of file practicum_marcelo_grossi.aux
  : \citation{GRAN
  :                ORIGINAL CITATION - PAGE 10 HANDBOOK}
 I'm skipping whatever remains of this command
-White space in argument---line 28 of file practicum_marcelo_grossi.aux
- : \citation{TF-IDF
- :                  paper}
+White space in argument---line 30 of file practicum_marcelo_grossi.aux
+ : \citation{TFIDF
+ :                 paper}
 I'm skipping whatever remains of this command
-White space in argument---line 29 of file practicum_marcelo_grossi.aux
+White space in argument---line 31 of file practicum_marcelo_grossi.aux
  : \citation{GRANGER
  :                   TEST}
 I'm skipping whatever remains of this command
@@ -29,7 +29,6 @@ Database file #1: practicum_marcelo_grossi.bib
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 ** Natbib version - not for normal IEEE work.
-Warning--empty author and editor in Handbook
 
 Done.
 (There were 6 error messages)
