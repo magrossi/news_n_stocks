@@ -1,29 +1,5 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: practicum_marcelo_grossi.aux
 The style file: IEEEtranN.bst
-White space in argument---line 23 of file practicum_marcelo_grossi.aux
- : \citation{GRAB
- :                CITATION FROM OLD NEWS ANALYSIS}
-I'm skipping whatever remains of this command
-White space in argument---line 25 of file practicum_marcelo_grossi.aux
- : \citation{FIND
- :                HERE}
-I'm skipping whatever remains of this command
-White space in argument---line 27 of file practicum_marcelo_grossi.aux
- : \citation{GRAB
- :                ORIGINAL CITATIONPAGE 10 HANDBOOK}
-I'm skipping whatever remains of this command
-White space in argument---line 28 of file practicum_marcelo_grossi.aux
- : \citation{GRAN
- :                ORIGINAL CITATION - PAGE 10 HANDBOOK}
-I'm skipping whatever remains of this command
-White space in argument---line 30 of file practicum_marcelo_grossi.aux
- : \citation{TFIDF
- :                 paper}
-I'm skipping whatever remains of this command
-White space in argument---line 31 of file practicum_marcelo_grossi.aux
- : \citation{GRANGER
- :                   TEST}
-I'm skipping whatever remains of this command
 Database file #1: practicum_marcelo_grossi.bib
 -- IEEEtranN.bst version 1.13 (2008/09/30) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
@@ -31,4 +7,3 @@ Database file #1: practicum_marcelo_grossi.bib
 ** Natbib version - not for normal IEEE work.
 
 Done.
-(There were 6 error messages)

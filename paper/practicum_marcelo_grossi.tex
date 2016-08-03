@@ -6,34 +6,26 @@
 \author{Marcelo Grossi}
 \begin{document}
 \maketitle
+
 \begin{abstract}
 Stock market prediction has been a topic of great interest for researchers. Numerous attempts to ``beat the market'' have been made without been able to consistently and accurately predict the movement of stock prices.
 \par
-In recent years, following the increase in computational processing capabilities, researchers have been studying the relationship between news articles and stock price movement \citep{Fu2008}\citep{Schumaker2009}. Most methods are based on sentiment analysis, where the news content is classified according to its potential of moving the underlying stock’s prices up (good news) or down (bad news). These methods however, do not take into account the financial instrument's context in determining the content of the news article, which greatly impairs the results of such studies.
+In recent years, following the increase in computational processing capabilities, researchers have been studying the relationship between news articles and stock price movement \citep{Fu2008,Schumaker2009}. Most methods are based on sentiment analysis, where the news content is classified according to its potential of moving the underlying stock's prices up (good news) or down (bad news). These methods however, do not take into account the financial instrument's context in determining the content of the news article, which greatly impairs the results of such studies.
 \par
-This work assumes the strong efficient market hypothesis which dictates that the stock's prices reflects all the information available (including historical prices, public news information and even insider information) \citep{fama1965behavior} and that everyone has some degree of access to the information. We will look at historical prices from different sources/indices and investigate the relationship between stock prices and news articles by identifying the important events in them and trying to match the news from that period with important price movements. This technique will allow us to identify for instance, which terminology or characteristic of news item has good or bad connotations to the price and how much impact can be attributed to it.
-\par
-As recent terrorist events have shown, some tend to be local with regard to stock market impact, others have more global ramifications.  This technique allow us to differentiate and localize the impact of a given new piece. Many other applications for this work can be thought of including, but not limited to a trade system that tries to anticipate price movements based on news repercussion and grouping of stocks that have similar news influencers but are not necessarily in the same market sector (discovery of non-obvious stock clustering).
+This work assumes the efficient market hypothesis which dictates that the stock's prices reflects all the information available (including historical prices, public news information and even insider information) \citep{fama1965behavior} and that everyone has some degree of access to the information. The relationship between closing historical prices from several companies will be related to relevant information in news articles by identifying the most important terms in a daily period and testing for some sort of causality between the significant terms and the price time series. This technique allows for direct analysis between aggregated news information and stock data, greatly reducing the complexity of dealing with textual information.
 \end{abstract}
 
 \section{Introduction}
-The relationship between news articles and stock price movements has been studied for several years \citep{gidofalvi2001}\citep{Fu2008}. The most prevalent methodology of relating news articles to stock prices is by capturing the investor sentiment \citep{Handbook} from the textual information (if it is positive, negative or neutral) and assigning a probability of whether the stock prices were likely to move upwards, downwards or stay the same. Previous researches \citep{FIND HERE} have shown more downside impact then upside in relation to the attributed news sentiment (i.e., bad news has more negative impact than good news has positive impact).
+The relationship between news articles and stock price movements has been studied for several years \citep{gidofalvi2001,Fu2008}. The most prevalent methodology of relating news articles to stock prices is by capturing the investor sentiment \citep{Handbook} from the textual information (if it is positive, negative or neutral) and assigning a probability of whether the stock prices were likely to move upwards, downwards or stay the same. Previous researches \citep{Tetlock2007} have shown that negative sentiment predicts downward pressure on market prices, and also \citep{barber2008all} that significant news will affect the traders beliefs, what translates into an increase in trading volume.
 \par
 Sentiment can also be understood as the informational value of news and can be interpreted in several ways, such as via the use of financial dictionaries for analysing positive terms versus negative terms 
-i.e., `profit' and `exceeds' versus `bankrupt' and `loss'; or via machine learning and natural language processing techniques to automatically generate lexicons for good and bad news \citep{Oliveira2014}; or a mixed model \citep{GRAB ORIGINAL CITATIONPAGE 10 HANDBOOK} whereby the researchers build a sentiment index that can be correlated to an underlying asset \citep{GRAN ORIGINAL CITATION - PAGE 10 HANDBOOK}.
+i.e., `profit' and `exceeds' versus `bankrupt' and `loss'; or via machine learning and natural language processing techniques to automatically generate lexicons for good and bad news sentiment \citep{Oliveira2014}, achieving excellent results compared to baseline lexicons.
 \par
-
-<<<<<<<<<<<<<<<
-<<< WHICH ONES GIVE WHICH RESULTS AND HOW SUCCESSFUL AT PREDICTION ? >>>
-These sentiment-based techniques are very promising. By using a simple na\``{i}ive classifier, \citep{gidofalvi2001} finds definite predictive power for stock price movement within a 20 minute window before and after a news article becomes publicly available.
-
-and show strong correlation with stock price movement, but it is unclear how this relationship comes to be.
->>>>>>>>>>>>>>>
-
+By using a simple na\``{i}ive classifier, \citep{gidofalvi2001} finds definite predictive power for stock price movement within a 20 minute window before and after a news article becomes publicly available. These sentiment-based researches are very promising, and although show high correlation with stock indicator movement it is unclear how this relationship comes to be.
 \par
-This paper tries to contribute to the work with a different approach to the analysis of the relationship between relevant terms in a textual corpus and stock prices. By computing the relative importance of a term over time using the Term Frequency Inverse Document Frequency \citep{TFIDF paper} weights, it allows for the ability to use regular tools for time series analysis which abstracts away the difficulties of dealing with textual data directly.
+This paper tries to contribute to the work by introducing a different approach to the analysis of the relationship between relevant terms in a textual corpus and stock prices. By computing the relative importance of a term over time using the Term Frequency Inverse Document Frequency \citep{Ramos1999} weight, it allows for the ability to use regular tools and models for time series analysis which abstracts away the difficulties of dealing with textual data directly, as textual information is now effectively converted pragmatically into a usable time series.
 \par
-To evaluate this model a Granger causality test \citep{GRANGER TEST} was used to assess the predictive power of the news time series over the stock price series. This test is performed between the top \(n\) most relevant terms of the day against the full set of stock prices. So the question posed is inverted; instead of asking `does this piece of news influence my stock?' we assume that news has influence over prices, and try to find `what stocks will be influenced by the current news state?'.
+To evaluate this model a Granger causality test \citep{Granger1969,Granger1980} was used to assess the predictive power of the news time series over the stock price series. This test is performed between the top \(n\) most relevant terms of the day against the full set of stock prices. So the question posed is inverted; instead of asking `does this piece of news influence my stock?' we assume that news has influence over prices, and try to find `what stocks will be influenced by the current news state?'.
 \par
 After selecting the term \(t\), and stock \(s\) tuples for a given day \(d\) a na\``{i}ive model is tested whereby the price of day \(d+1\) is predicted and compared with the actual price.
 \section{Data sources}
@@ -51,15 +43,12 @@ From the daily summaries obtained through \(tfidf\) it becomes straight forward 
 \[TS_t=\forall{tfidf_{t_{d_i}}},\] where \(d_i \in D_{start \to end}\).
 
 \section{Evaluation}
-tell how granger test works.
+- tell how granger test works.
+- tell how to match term ts and stock.
+- present results with examples of stocks and terms that were found.
+- do prediction of day + 1 of couple of stocks to show as an example
 
-tell how to match term ts and stock.
-
-present results with examples of stocks and terms that were found.
-
-do prediction of day + 1 using the news relationship using at least two methods (arima and pattern dtw).
-
-compare predictions with baseline index.
 \section{Conclusion}
+
 \bibliography{practicum_marcelo_grossi}
 \end{document}
