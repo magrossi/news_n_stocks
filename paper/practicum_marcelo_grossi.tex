@@ -90,18 +90,17 @@ The resulting tuples \((t_d, s_d)\) where \(t_d \xrightarrow[causes]{Granger} s_
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{force_20140814}
-\caption{Directed graph of \textit{Granger-causing} terms (\textit{blue}) and stock symbols (\textit{brown}) for the date 14/08/2014}
+\caption{Directed graph of \textit{Granger-causing} terms (\textit{blue}) and stock symbols (\textit{brown}) for the sample period 01/01/2013 to 14/08/2014}
 \label{fig:1}
 \end{figure}
 
 \section{Predicting price movements}
-\textbf{- explain how the validation is setup, arima/arma models, moving window for cross validation
-- finalize by explaining the two setups:
-  1. term, stock one on one
-  2. stock, aggregated [terms]}
-\par
+To validate the generated term predicting time series an \textit{autoregressive integrated moving average} (\textit{ARIMA}) model is fit to each term, stock and day tuples, and is first individually compared against the actual stock prices (where a sum of squared errors is computed). Afterwards all the predictions for the same stock on the same day are aggregated and an average prediction is generated. This aggregated prediction's sum of squared errors are then compared to the best sum of square errors of the previous step in order to assess if a composite prediction is better than the best individual one. This test is repeated for all days of the test dataset (namely, the interval between 14/08/2014 to 19/09/2014).
 
-The experiments will consist of two major set ups, each with two key performance indicators. First a simple one to one term to stock analysis will be performed.
+\textbf{Do same ARIMA fitting but for all precitors together?}
+
+\par
+A tradeability test is also performed to verify if this technique can actually be used as a valid investment strategy. This test is a simple directional correctness measure. If for day \(d\) the predictions (best individual and aggregated) are able to correctly forecast the direction in which the prices have moved the next day \(d+1\), it is considered correct. If the correctness rate is found to be better than random (far from \(50\%\)), it is considered a tradeable strategy. Note that even if the correctness rate is close \(0\%\) it is considered tradeable, as all an investor has to do is invert the signal.
 
 \section{Results}
 The tuples generated for \textit{Granger-causing} terms and stocks were quite interesting. The term \textit{`loan'} was matched with stock prices from \textit{Alcoa}, \textit{Intel}, \textit{Merck \& Co.}, and \textit{Microsoft} indicating a predictive relationship between the historic relative importance of this term in the New York Times media coverage news corpus and the aforementioned companies' stock prices, as traded in the New York Stock Exchange.
@@ -110,12 +109,10 @@ The tuples generated for \textit{Granger-causing} terms and stocks were quite in
 The philosophy of why this term is related to these particular stocks is outside the scope of this research but other more peculiar terms were also matched with several stocks. Terms such as `billion', `million', `could', `year' and `thursday'  were inexplicably found to have a \textit{Granger-causal} relationship with many blue chip stock prices. Given the common and widespread usage of these terms, they may have biased the \textit{TFIDF} score making the interpretation of their relative importance into a proxy of some other generating factor - perhaps the volume of news produced? Or something else entirely.
 
 \textbf{
-- do prediction of day + 1 of couple of stocks to show as an example
-1. term, stock
-- show results with sum of square errors (compare normal arma versus arma with exogenous)
+- results for the validation section here -
+- results with sum of square errors (compare normal arima versus arima with exogenous)
 - show probability of directional correctness (predicted to go up/down versus actually went up/down)
-2. stock, avg[terms]
-- now average predictions of multiple term time series related to same stock and take average as a consolidated prediction.
+- show average predictions of multiple term time series related to same stock and take average as a consolidated prediction.
 - show results with square error
 - show probability of directional correctness}
 
