@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{hyperref}
 \usepackage{natbib}
+\usepackage{mathtools}
 \bibliographystyle{IEEEtranN}
 \title{Analysing news articles impact \\ in stock price movements}
 \author{Marcelo Grossi}
@@ -9,54 +10,89 @@
 
 \begin{abstract}
 Stock market prediction has been a topic of great interest for researchers. Numerous attempts to ``beat the market'' have been made without been able to consistently and accurately predict the movement of stock prices.
+
 \par
 In recent years, following the increase in computational processing capabilities, researchers have been studying the relationship between news articles and stock price movement \citep{Fu2008,Schumaker2009}. Most methods are based on sentiment analysis, where the news content is classified according to its potential of moving the underlying stock's prices up (good news) or down (bad news). These methods however, do not take into account the financial instrument's context in determining the content of the news article, which greatly impairs the results of such studies.
+
 \par
 This work assumes the efficient market hypothesis which dictates that the stock's prices reflects all the information available (including historical prices, public news information and even insider information) \citep{fama1965behavior} and that everyone has some degree of access to the information. The relationship between closing historical prices from several companies will be related to relevant information in news articles by identifying the most important terms in a daily period and testing for some sort of causality between the significant terms and the price time series. This technique allows for direct analysis between aggregated news information and stock data, greatly reducing the complexity of dealing with textual information.
 \end{abstract}
 
 \section{Introduction}
 The relationship between news articles and stock price movements has been studied for several years \citep{gidofalvi2001,Fu2008}. The most prevalent methodology of relating news articles to stock prices is by capturing the investor sentiment \citep{Handbook} from the textual information (if it is positive, negative or neutral) and assigning a probability of whether the stock prices were likely to move upwards, downwards or stay the same. Previous researches \citep{Tetlock2007} have shown that negative sentiment predicts downward pressure on market prices, and also \citep{barber2008all} that significant news will affect the traders beliefs, what translates into an increase in trading volume.
+
 \par
 Sentiment can also be understood as the informational value of news and can be interpreted in several ways, such as via the use of financial dictionaries for analysing positive terms versus negative terms 
 i.e., `profit' and `exceeds' versus `bankrupt' and `loss'; or via machine learning and natural language processing techniques to automatically generate lexicons for good and bad news sentiment \citep{Oliveira2014}, achieving excellent results compared to baseline lexicons.
+
 \par
 By using a simple na\"{\i}ve classifier, \citep{gidofalvi2001} finds definite predictive power for stock price movement within a 20 minute window before and after a news article becomes publicly available. These sentiment-based researches are very promising, and although show high correlation with stock indicator movement it is unclear how this relationship comes to be.
+
 \par
 This paper tries to contribute to the work by introducing a different approach to the analysis of the relationship between relevant terms in a textual corpus and stock prices. By computing the relative importance of a term over time using the Term Frequency Inverse Document Frequency \citep{Ramos2003} weight, it allows for the ability to use regular tools and models for time series analysis which abstracts away the difficulties of dealing with textual data directly, as textual information is now effectively converted pragmatically into a usable time series.
+
 \par
 To evaluate this model a Granger causality test \citep{Granger1969,Granger1980} was used to assess the predictive power of the news time series over the stock price series. This test is performed between the top \(n\) most relevant terms of the day against the full set of stock prices. So the question posed is inverted; instead of asking `does this piece of news influence my stock?' we assume that news has influence over prices, and try to find `what stocks will be influenced by the current news state?'.
+
 \par
 After selecting the term \(t\), and stock \(s\) tuples for a given day \(d\) a na\"{\i}ve model is tested whereby the price of day \(d+1\) is predicted and compared with the actual price.
 
 \section{Data sources}
 Online news articles from the New York Times (\url{http://www.nytimes.com/}) were used as the textual corpus of this research. Around 50,000 business-related news articles were scraped from the period between January 1\textsuperscript{st}, 2013 and October 19\textsuperscript{th}, 2014. As one of the most respected news media outlets in the world, the New York Times should provide a sufficiently good breadth of market relevant information for analysing news impact on stock prices. More specialized news providers (such as Bloomberg or Financial Times) that could potentially outperform the current data source were not considered due to their lack of impact on small investors.
+
 \par
-In order to maximize the expectation of news having an influence on stock prices, this data had to come from the same region as the news provider. Therefore, only stocks traded on the New York Stock Exchange were considered and daily price information was gathered for a period that encompasses completely the news articles' database date range.
+In order to maximize the expectation of news having an influence on stock prices, this data had to come from the same region as the news provider. Therefore, only stocks traded in the New York Stock Exchange were considered and daily price from twenty nine blue chip companies was gathered for a period that encompasses completely the news articles' database date range.
 
 \section{From text to time series}
 Each news article \(a\) was converted from raw unstructured textual data to a computer-friendly representation, in the form of a vector of term and related frequency \(f\), where a term \(t\) is a word \textit{n-}gram (for this experiment \textit{1} and \textit{2-}grams were used). This format is also commonly known as \textit{bag-of-words}.
 \[a=[(t_1,f_1),(t_2,f_2),..,(t_n,f_n)]\]
+
 \par
-To transform the unstructured text into the \textit{bag-of-words} format a series of sequential transformations was applied. Contractions are expanded, i.e, \textit{it's} \(\to\) \textit{it is}; most common words in the English language are removed (also known as \textit{stop words}); sentences are separated (so \textit{n-}grams bigger than unity can be generated only if they came from the same sentence); word tokenization (transform sentence \(s\) in a collection of words \(W_s\)) is used; part-of-speech tagging (or \textit{POST}) was performed in each sentence (disambiguate each word's grammatical function, i.e., adjective, subject, verb, etc.); word lemmatization (use \textit{POST} extracted at the previous step to calculate the word's lemma, i.e., \textit{saw, verb} \(\to\) \textit{see} or \textit{saw, subject} \(\to\) \textit{saw}); and finally generation of \textit{n-}grams -- i.e., given that \(W_{s_1}=[w_1,w_2,..,w_n]\) is a set of words from sentence one, the \textit{2-}grams collection would be of the form \([w_1 w_2,w_2 w_3,..,w_{n-1} w_n]\).
+To transform the unstructured text into the \textit{bag-of-words} format a series of sequential transformations was applied. Contractions are expanded, i.e, \textit{it's} \(\to\) \textit{it is}; most common words in the English language are removed (also known as \textit{stop words}); sentences are separated (so \(n-\)grams bigger than unity can be generated only if they came from the same sentence); word tokenization (transform sentence \(s\) in a collection of words \(W_s\)) is used; part-of-speech tagging (or \textit{POST}) was performed in each sentence (disambiguate each word's grammatical function, i.e., adjective, subject, verb, etc.); word lemmatization (use \textit{POST} extracted at the previous step to calculate the word's lemma, i.e., \textit{saw, verb} \(\to\) \textit{see} or \textit{saw, subject} \(\to\) \textit{saw}); and finally generation of \(n-\)grams -- i.e., given that \(W_{s_1}=[w_1,w_2,..,w_n]\) is a set of words from sentence one, the \textit{2-}grams collection would be of the form \([w_1 w_2,w_2 w_3,..,w_{n-1} w_n]\).
+
 \par
-Each news article (converted to \textit{bag-of-words}) \(a \in A\) was grouped by the date \(d\) it was published, and a daily summary was produced whereby a score was assigned to each \textit{n-}gram following the Term Frequency Inverse Document Frequency algorithm. This score is calculated by multiplying the \textit{n-}gram frequency (number of times \textit{n-}gram \(t\) appears in all of \(A_d\) over the total number of \textit{n-}grams in \(A_d\)) by the logarithm of the inverse of the document frequency (total number of articles in the day \(\vert A_d \vert\) over the number of articles \(\vert A_t \vert\) that \textit{n-}gram \(t\) appears in). Another way of understanding the \(tfidf_{t_d}\) is that it expresses the relative importance of \textit{n-}gram \(t\) over the course of day \(d\). So even if a term (or \textit{n-}gram) appears in most documents with very high frequency (high \(tf\)), it will get heavily penalized by the \(idf\), where \(0 \leq tfidf_t\). Although the score is unbounded in its upper limits, it is expected that in an unbiased big collection of articles, this value stays close to zero (this is due to the normalization of the \(tf\) whereby the individual frequencies are divided by the total frequency of the day).
-From the daily summaries obtained through \(tfidf\) it becomes straight forward to calculate a time series \(TS\) for any \textit{n-}gram \(t\) given a set of all days \(D_{start \to end}\) between days \(d_{start}\) and \(d_{end}\).
+Each news article (converted to \textit{bag-of-words}) \(a \in A\) was grouped by the date \(d\) it was published, and a daily summary was produced whereby a score was assigned to each \(n-\)gram following the Term Frequency Inverse Document Frequency algorithm. This score is calculated by multiplying the \(n-\)gram frequency (number of times \(n-\)gram \(t\) appears in all of \(A_d\) over the total number of \(n-\)grams in \(A_d\)) by the logarithm of the inverse of the document frequency (total number of articles in the day \(\vert A_d \vert\) over the number of articles \(\vert A_t \vert\) that \(n-\)gram \(t\) appears in). Another way of understanding the \(tfidf_{t_d}\) is that it expresses the relative importance of \(n-\)gram \(t\) over the course of day \(d\). So even if a term (or \(n-\)gram) appears in most documents with very high frequency (high \(tf\)), it will get heavily penalized by the \(idf\), where \(0 \leq tfidf_t\). Although the score is unbounded in its upper limits, it is expected that in an unbiased big collection of articles, this value stays close to zero (this is due to the normalization of the \(tf\) whereby the individual frequencies are divided by the total frequency of the day).
+From the daily summaries obtained through \(tfidf\) it becomes straight forward to calculate a time series \(TS\) for any \(n-\)gram \(t\) given a set of all days \(D_{start \to end}\) between days \(d_{start}\) and \(d_{end}\).
 \[TS_t=\forall{tfidf_{t_d}},\] where \(d \in D_{start \to end}\).
 
 \section{Selecting terms and stocks}
-- too many terms to brute force
-- need to have a criteria for using term ts as predictor
-- what is granger test?
-- what are the assumptions and formulas?
-\citep{Giles2011}
-\citep{Toda1995}
-- show 
-The \textit{TFIDF} score was also used to 
-Averaging on roughly 30,000 different terms per day,
-\textbf{- tell how granger test works.
-- tell how to match term ts and stock.
-- present results with examples of stocks and terms that were found.}
+One of the objectives of this research is to find some relationship between the daily stock prices and the time series produced from the textual corpus. A brute force attempt will not be attempted, as there are roughly 30,000 different \(n-\)grams each day and those in the lower end of the \(TFIDF\) weighing scheme are either too frequent to be of any use, or too infrequent so as to not have enough data to be relevant. For this study, an arbitrary amount of \(100\) \(n-\)grams with the best score are selected from each day's summary, and a time series is extracted for each one. This set will henceforth be mentioned as \(T_d\).
+
+\par
+The set of stock price data \(S_d\), as a dependent variable, is a slice from the complete stock price information from January 1\textsuperscript{st}, 2013 to \(d\); where \(d\) is the day being evaluated for the independent variables in \(T_d\). Interpolation is performed in \(S_d\) at this point, to make sure all news data points are captured and potential relevant information published on weekends or holidays is properly modelled.
+
+\par
+In order to produce the final term \(t_d \in T_d\), stock \(s_d \in S_d\) tuples a test must be performed to validate wether or not \(t_d\) has any prediction power over \(s_d\). With that same objective, \citep{Granger1969,Granger1980} proposed a \textit{predictive causality} statistical test to determine if a time series is useful in forecasting another. This \textit{Granger-causality test}, or simply \textit{Granger test} is based on two fundamental principles  according to \citep{eichler2012}:
+\begin{enumerate}
+\item ``the effect does not precede its cause in time'';
+\item ``the cause has unique information about the series being caused that is not available otherwise'';
+\end{enumerate}
+
+\par
+Following from these principles, it can then be formulated by letting \(y\) and \(x\) be two stationary time series, where the null hypothesis is that \(x\) does not \textit{Granger-cause} \(y\), if the \textit{F-test} (or \textit{Wald test}) between a univariate auto-regression of \(y\) (\ref{eq:1}) and a multivariate auto-regression of both \(y\) and \(x\) (\ref{eq:2}) fails to find any explanatory power after the exogenous variable \(x\) is added to the model.
+\begin{equation}
+\label{eq:1}
+y_t=\beta_0 + \beta_1 y_{t-1} + \beta_2 y_{t-2} + .. + \beta_n y_{t-n} + \varepsilon_t
+\end{equation}
+\begin{equation}
+\label{eq:2}
+y_t=\beta_0 + \beta_1 y_{t-1} + .. + \beta_n y_{t-n} + 
+\alpha_1 x_{t-1} + .. + \alpha_n x_{t-n}
++ \varepsilon_t
+\end{equation}
+
+\par
+It is not uncommon to find a bi-directional causality relationship between the variables when \textit{Granger-testing}, therefore both directions are tested and if no causality is found, or the causality is found in both directions the tuple is disregarded. Furhter information on the actual methodology used for testing \textit{Granger-causality} in this study can be found in \citep{Toda1995}, or excellently summarized in \citep{Giles2011}.
+
+\par
+The resulting tuples \((t_d, s_d)\) where \(t_d \xrightarrow[causes]{Granger} s_d\) (and \(t_d \not\xleftarrow[causes]{Granger} s_d\)) can now be used to test the effectiveness of the predicting power of \(t_d\) over \(s_d\). As an example \ref{fig:1} shows a visualization of terms \(t_d\) related to stocks \(s_d\) for \(d=14/08/2014\) (this day was chosen to allow a \(9:1\) split of the dataset, saving \(10\%\) for the tests).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{force_20140814}
+\caption{Directed graph of \textit{Granger-causing} terms (\textit{blue}) and stock symbols (\textit{brown}) for the date 14/08/2014}
+\label{fig:1}
+\end{figure}
 
 \section{Predicting price movements}
 \textbf{- explain how the validation is setup, arima/arma models, moving window for cross validation
@@ -68,7 +104,13 @@ Averaging on roughly 30,000 different terms per day,
 The experiments will consist of two major set ups, each with two key performance indicators. First a simple one to one term to stock analysis will be performed.
 
 \section{Results}
-\textbf{- do prediction of day + 1 of couple of stocks to show as an example
+The tuples generated for \textit{Granger-causing} terms and stocks were quite interesting. The term \textit{`loan'} was matched with stock prices from \textit{Alcoa}, \textit{Intel}, \textit{Merck \& Co.}, and \textit{Microsoft} indicating a predictive relationship between the historic relative importance of this term in the New York Times media coverage news corpus and the aforementioned companies' stock prices, as traded in the New York Stock Exchange.
+
+\par
+The philosophy of why this term is related to these particular stocks is outside the scope of this research but other more peculiar terms were also matched with several stocks. Terms such as `billion', `million', `could', `year' and `thursday'  were inexplicably found to have a \textit{Granger-causal} relationship with many blue chip stock prices. Given the common and widespread usage of these terms, they may have biased the \textit{TFIDF} score making the interpretation of their relative importance into a proxy of some other generating factor - perhaps the volume of news produced? Or something else entirely.
+
+\textbf{
+- do prediction of day + 1 of couple of stocks to show as an example
 1. term, stock
 - show results with sum of square errors (compare normal arma versus arma with exogenous)
 - show probability of directional correctness (predicted to go up/down versus actually went up/down)
@@ -79,11 +121,14 @@ The experiments will consist of two major set ups, each with two key performance
 
 
 \section{Conclusion}
+A different approach of relating textual data and stock price movements is introduced and ...
 \textbf{- small introduction of what was done, show results and come up with an explanation of why they were good/bad.}
+
 \par
 Some caveats are important to be mentioned. Using a larger dataset, that spanned multiple years and sourced from different providers, would help offset potential editorial biases and increase variance. Also, if both the time and date of publishing were available for each news article, an equivalent intra-day research could show different insights into news and stock relationship.
+
 \par
-Future research may include studying different news sources and comparing their effectiveness; or building a directed term to stock graph and trying to identify unknown relationships between stocks on different sectors. Experimenting with different time series models and comparing results will also be a very interesting avenue to pursue.
+Future research may include repeating this same experiments using different textual filtering options, such as capturing only nouns or named entities from the textual corpus to avoid some of the more peculiar results founds here. Another avenue of study can be to compare the effectiveness of different news sources; or build a directed term to stock graph and procure unknown relationships between stocks on different sectors or with weak intuitive relationships. Experimenting with different time series models and comparing results can also be a very interesting path to pursue.
 
 \bibliography{practicum_marcelo_grossi}
 \end{document}
