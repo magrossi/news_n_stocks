@@ -32,11 +32,11 @@ x.test = test[,1]
 # do arima analysis
 arima_coeff <- auto.arima(y.sample, xreg=x.sample)
 # arima_coeff (0,1,0)
-y.fit <- Arima(y.sample, xreg=x.sample, order = c(1,1,0))
+y.fit <- Arima(y.sample, xreg=x.sample, order = c(3,1,2))
 
 # Plot the fitted model comparing to real data
-plot(fitted(y.fit), ylab="", type="o", lwd=1.5, lty=2, main = "Fitted model vs Original data") # Fitted model
-lines(y.sample, col=4, type="o", ylab="") # original data
+plot(fitted(y.fit), ylab="", lwd=1.5, lty=2, main = "Fitted model vs Original data") # Fitted model
+lines(y.sample, col=4, ylab="") # original data
 
 # predict
 y.forecast <- forecast(y.fit, h = nrow(x.test), xreg=x.test)

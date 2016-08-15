@@ -12,9 +12,9 @@
 
 <script type="text/javascript">
 
-    var w = 1900;
+    var w = 1200;
     var h = 900;
-    var linkDistance=20;
+    var linkDistance=100;
 
     var colors = {
         stock: '#B82E00',
@@ -28,6 +28,7 @@
         .links(dataset.edges)
         .size([w,h])
         .linkDistance([linkDistance])
+        .chargeDistance(30)
         .charge([-30])
         .theta(0.1)
         .gravity(0.05)
@@ -49,7 +50,6 @@
       .attr({"r":10})
       .style("fill",function(d){return colors[d.group];})
       .call(force.drag)
-
 
     var nodelabels = svg.selectAll(".nodelabel")
        .data(dataset.nodes)

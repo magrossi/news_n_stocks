@@ -1,15 +1,15 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: practicum_marcelo_grossi.aux
-The style file: IEEEtranN.bst
-Database file #1: practicum_marcelo_grossi.bib
+The style file: IEEEtran.bst
+Database file #1: IEEEabrv.bib
+Database file #2: practicum_marcelo_grossi.bib
 I was expecting a `,' or a `}'---line 159 of file practicum_marcelo_grossi.bib
  : 
  : @article{eichler2012,
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
--- IEEEtranN.bst version 1.13 (2008/09/30) by Michael Shell.
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
-** Natbib version - not for normal IEEE work.
 
 Done.
 (There was 1 error message)
