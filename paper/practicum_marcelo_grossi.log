@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.7.25)  15 AUG 2016 06:25
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.7.25)  15 AUG 2016 19:54
 entering extended mode
 **practicum_marcelo_grossi.tex
 (practicum_marcelo_grossi.tex
@@ -416,11 +416,11 @@ File: dir_corr_hist.png Graphic file (type png)
 Package pdftex.def Info: dir_corr_hist.png used on input line 164.
 (pdftex.def)             Requested size: 180.67499pt x 129.19244pt.
 
-<rmse_line.png, id=109, 372.39125pt x 260.975pt>
+<rmse_line.png, id=109, 372.39125pt x 247.92625pt>
 File: rmse_line.png Graphic file (type png)
  <use rmse_line.png>
 Package pdftex.def Info: rmse_line.png used on input line 185.
-(pdftex.def)             Requested size: 180.67499pt x 126.6205pt.
+(pdftex.def)             Requested size: 180.67499pt x 120.28947pt.
  [4 <./dir_corr_line.png> <./dir_corr_hist.png>] (practicum_marcelo_grossi.bbl
 Missing character: There is no Ã in font ptmr7t!
 Missing character: There is no ³ in font ptmr7t!
@@ -429,7 +429,10 @@ Underfull \hbox (badness 2012) in paragraph at lines 72--75
 []\OT1/ptm/m/n/11 C. Granger, ``In-ves-ti-gat-ing causal re-la-tions by
  []
 
-[5 <./rmse_line.png>]
+
+Underfull \vbox (badness 1048) has occurred while \output is active []
+
+ [5 <./rmse_line.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 90--93
 []\OT1/ptm/m/n/11 D. Giles, ``Test-ing for granger causal-ity,''
  []
@@ -471,7 +474,7 @@ Here is how much of TeX's memory you used:
  10644 multiletter control sequences out of 15000+200000
  41938 words of font info for 83 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 33i,12n,28p,1275b,461s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 33i,12n,28p,1275b,463s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program File
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Program Files/MiKTeX 2.9/font
@@ -485,7 +488,7 @@ iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9
 /fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/
 times/utmbi8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb
 ><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on practicum_marcelo_grossi.pdf (6 pages, 234740 bytes).
+Output written on practicum_marcelo_grossi.pdf (6 pages, 239775 bytes).
 PDF statistics:
  193 PDF objects out of 1000 (max. 8388607)
  41 named destinations out of 1000 (max. 500000)
