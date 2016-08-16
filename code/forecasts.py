@@ -56,6 +56,10 @@ def get_forecasts(term_panel, term_measure, stock_panel, start_date, stock_symbo
     logging.info('start get_forecasts for %s with terms (%s)' % (stock_symbol, ','.join(term_list)))
     transparams = True # let arima model do it for us
 
+    ks = '[' + stock_symbol + ']' # key for stock only (no exog)
+    ka = ','.join(term_list)      # key for aggregate exogs
+                                  # key for individual terms is the term itself
+
     # get endog and exog DataFrames
     endog = pd.DataFrame(stock_panel[stock_symbol])
     endog_diff_order, endog_diff, _ = find_diff_stationary(stock_panel[stock_symbol])
@@ -83,8 +87,15 @@ def get_forecasts(term_panel, term_measure, stock_panel, start_date, stock_symbo
     train = aligned[:start_date - datetime.timedelta(days=1)]
     test = aligned[start_date:]
 
-    # calculate ARIMAX orders
+    # ####################### #
+    # calculate ARIMAX orders #
+    # ####################### #
     arima_orders = {}
+    
+    # 0: calculate without exog
+    arma_order = get_arma_order(train[stock_symbol], None)
+    arima_orders[ks] = (arma_order[0], 0, arma_order[1])
+
     # 1: calculate for all (endog, exog=term) pairs
     for t in term_list:
         arma_order = get_arma_order(train[stock_symbol], train[[t]])
@@ -93,62 +104,73 @@ def get_forecasts(term_panel, term_measure, stock_panel, start_date, stock_symbo
     # 2: calculate for (endog, exog=[terms]) pair
     if len(term_list) > 1:
         arma_order = get_arma_order(train[stock_symbol], train[term_list])
-        arima_orders[','.join(term_list)] = (arma_order[0], 0, arma_order[1])
+        arima_orders[ka] = (arma_order[0], 0, arma_order[1])
 
-    # fit models
+    # ####################### #
+    # fit models              #
+    # ####################### #
     models = {}
+    
+    # 0: calculate without exog
+    models[ks] = get_fitted_model(train[stock_symbol], None, arima_orders[ks])
+    
     # 1: calculate for all (endog, exog=term) pairs
     for t in term_list:
-        k = t
-        models[k] = get_fitted_model(train[stock_symbol], train[[t]], arima_orders[k])
+        models[t] = get_fitted_model(train[stock_symbol], train[[t]], arima_orders[t])
 
     # 2: calculate for (endog, exog=[terms]) pair
     if len(term_list) > 1:
-        k = ','.join(term_list)
-        models[k] = get_fitted_model(train[stock_symbol], train[term_list], arima_orders[k], transparams=transparams)
+        models[ka] = get_fitted_model(train[stock_symbol], train[term_list], arima_orders[ka], transparams=transparams)
 
-    # do forecast out-of-sample for all test dataset
+    # ############################################## #
+    # do forecast out-of-sample for all test dataset #
+    # ############################################## #
     forecast = {}
     test_dates = [start_date + datetime.timedelta(days=x) for x in range(0, len(test))]
-    #test_dates = [start_date]
     for dt in test_dates:
+        # 0: calculate without exog
+        if not isinstance(models[ks], basestring):
+        fval = models[ks].forecast(steps=1)[0]
+        if ks in forecast:
+            forecast[ks] = np.append(forecast[ks], fval)
+        else:
+            forecast[ks] = fval
+                    
         # 1: calculate for all (endog, exog=term) pairs
         for t in term_list:
-            k = t
             # ignore models that failed to fit
-            if not isinstance(models[k], basestring):
+            if not isinstance(models[t], basestring):
                 # forecast next value
-                fval = models[k].forecast(steps=1, exog=test[[t]][dt:dt])[0]
+                fval = models[t].forecast(steps=1, exog=test[[t]][dt:dt])[0]
                 # add to forecast array
-                if k in forecast:
-                    forecast[k] = np.append(forecast[k], fval)
+                if t in forecast:
+                    forecast[t] = np.append(forecast[t], fval)
                 else:
-                    forecast[k] = fval
+                    forecast[t] = fval
 
                 # add test value to model in order to predict the next day
                 # using train values, this way it is more realistic as how it
                 # would be done in the real world
-                models[k].data.endog = np.append(models[k].data.endog, test[stock_symbol][dt:dt], axis=0)
-                models[k].data.exog = np.append(models[k].data.exog, test[[t]][dt:dt], axis=0)
+                models[t].data.endog = np.append(models[t].data.endog, test[stock_symbol][dt:dt], axis=0)
+                models[t].data.exog = np.append(models[t].data.exog, test[[t]][dt:dt], axis=0)
 
         # 2: calculate for (endog, exog=[terms]) pair
         if len(term_list) > 1:
-            k = ','.join(term_list)
             # ignore if failed fitting
-            if not isinstance(models[k], basestring):
+            if not isinstance(models[ka], basestring):
                 # forecast next value
-                fval = models[k].forecast(steps=1, exog=test[term_list][dt:dt])[0]
+                fval = models[ka].forecast(steps=1, exog=test[term_list][dt:dt])[0]
                 # add to forecast array
-                if k in forecast:
-                    forecast[k] = np.append(forecast[k], fval)
+                if ka in forecast:
+                    forecast[ka] = np.append(forecast[ka], fval)
                 else:
-                    forecast[k] = fval
+                    forecast[ka] = fval
 
                 # add test value to model in order to predict the next day
                 # using train values, this way it is more realistic as how it
                 # would be done in the real world
-                models[k].data.endog = np.append(models[k].data.endog, test[stock_symbol][dt:dt], axis=0)
-                models[k].data.exog = np.append(models[k].data.exog, test[term_list][dt:dt], axis=0)
+                models[ka].data.endog = np.append(models[ka].data.endog, test[stock_symbol][dt:dt], axis=0)
+                models[ka].data.exog = np.append(models[ka].data.exog, test[term_list][dt:dt], axis=0)
 
     return {
         'orders' : arima_orders,
