@@ -91,7 +91,7 @@ def get_forecasts(term_panel, term_measure, stock_panel, start_date, stock_symbo
     # calculate ARIMAX orders #
     # ####################### #
     arima_orders = {}
-    
+
     # 0: calculate without exog
     arma_order = get_arma_order(train[stock_symbol], None)
     arima_orders[ks] = (arma_order[0], 0, arma_order[1])
@@ -110,10 +110,10 @@ def get_forecasts(term_panel, term_measure, stock_panel, start_date, stock_symbo
     # fit models              #
     # ####################### #
     models = {}
-    
+
     # 0: calculate without exog
     models[ks] = get_fitted_model(train[stock_symbol], None, arima_orders[ks])
-    
+
     # 1: calculate for all (endog, exog=term) pairs
     for t in term_list:
         models[t] = get_fitted_model(train[stock_symbol], train[[t]], arima_orders[t])
@@ -130,12 +130,12 @@ def get_forecasts(term_panel, term_measure, stock_panel, start_date, stock_symbo
     for dt in test_dates:
         # 0: calculate without exog
         if not isinstance(models[ks], basestring):
-        fval = models[ks].forecast(steps=1)[0]
-        if ks in forecast:
-            forecast[ks] = np.append(forecast[ks], fval)
-        else:
-            forecast[ks] = fval
-                    
+            fval = models[ks].forecast(steps=1)[0]
+            if ks in forecast:
+                forecast[ks] = np.append(forecast[ks], fval)
+            else:
+                forecast[ks] = fval
+
         # 1: calculate for all (endog, exog=term) pairs
         for t in term_list:
             # ignore models that failed to fit

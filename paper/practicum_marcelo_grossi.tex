@@ -105,7 +105,7 @@ The resulting tuples \((t_d, s_d)\) where \(t_d \xrightarrow[causes]{Granger} s_
 \end{figure}
 
 \section{Predicting price movements}
-To validate the generated term predicting time series a simple \textit{autoregressive integrated moving average with exogenous variable} (\textit{ARIMAX}) model is fit to each term, stock tuples, where the stock price series is the target function and the term series functions as a predictor (or exogenous variable). The tests are performed using each term series as an exogenous variable, then all term series related to a stock are used as exogenous variables to fit the same model. These are henceforth referred to as the individual and aggregated models.
+To validate the generated term predicting time series a simple \textit{autoregressive integrated moving average with exogenous variable} (\textit{ARIMAX}) model is fit to each term, stock tuples, where the stock price series is the target function and the term series functions as a predictor (or exogenous variable). The tests are performed using each term series as an exogenous variable individually, then all term series related to a stock are used as exogenous variables to fit the same model. A final model is fit to the stock prices without any predictors, to serve as the baseline for further comparisons. These models are henceforth referred to as the individual (\(Ind\)), aggregated (\(Agg\)) and no-exogenous models (\(NoEx\)).
 
 \par
 The \textit{ARIMAX} model, which is an integrated variation of the \textit{ARMA} model with exogenous variables, is fit for modelling auto-correlated data with or without seasonality components (in this study only the non-seasonal variety is used), where the integrated part is a simple shorthand for differencing the series before calculating the coefficients to ensure stationary. The introduction of exogenous variables in the model is also a simple addition of the covariate \(x_t\) on the right hand side of the \textit{ARMA} formula. Equations~\ref{eq:4} and \ref{eq:5} show the \textit{ARMA(p,q)} and \textit{ARMAX(p,q)} models respectively, where \(z_t\) is a white noise process.
@@ -132,10 +132,10 @@ SCALE_{s}=\frac{s-\min s}{\max \{s-\min s\}}
 \end{equation}
 
 \par
-A tradeability test is also performed to verify if this technique can actually be used as a valid investment strategy. This test is a simple directional correctness ratio measure. If for day \(d\) the predictions (individual and aggregated) are able to correctly forecast the direction in which the prices have moved the next day \(d+1\), it is considered correct. If the correctness rate is found to be better than random (far from \(50\%\)), it is considered a tradeable strategy. Note that even if the correctness rate is far below \(50\%\) it is considered tradeable, as all an investor has to do is invert the signal.
+A tradeability test is also performed to verify if this technique can be used directly as a viable investment strategy. This test is embodied by a simple directional correctness ratio measure. If for day \(d\) the predictions (individual, aggregated and no-exogenous) are able to correctly forecast the direction in which the prices have moved the following day \(d+1\), it is considered correct. If the correctness rate is found to be better than random (far from \(50\%\)), it is considered a viable strategy. Note that even if the correctness rate is far below \(50\%\) it can still be considered viable, as all an investor has to do is invert the signal.
 
 \par
-These tests are computed for all days of the test dataset (namely, the interval between 14/08/2014 to 20/09/2014).
+These tests are computed for all days of the test dataset (namely, the interval between 14/08/2014 and 20/09/2014).
 
 \section{Results}
 The tuples generated for \textit{Granger-causing} terms and stocks were quite interesting. The term \textit{`loan'} was matched with stock prices from \textit{Alcoa}, \textit{Intel}, \textit{Merck \& Co.}, and \textit{Microsoft} indicating a predictive relationship between the historic relative importance of this term in the New York Times media coverage news corpus and the aforementioned companies' stock prices, as traded in the New York Stock Exchange.
@@ -144,64 +144,60 @@ The tuples generated for \textit{Granger-causing} terms and stocks were quite in
 The philosophy of why this term is related to these particular stocks is outside the scope of this research but other more peculiar terms were also matched with several stocks. Terms such as `billion', `million', `could', `year' and `thursday'  were inexplicably found to have a \textit{Granger-causal} relationship with many blue chip stock prices. Given the common and widespread usage of these terms, they may have biased the \textit{TFIDF} score making the interpretation of their relative importance into a proxy of some other generating factor - perhaps the volume of news produced? Or something else entirely.
 
 \par
-The \textit{ARIMAX} model turned out to be a poor predictor of the stock series, failing to fit the data accordingly. It would be interesting to analyse the same dataset with a collection of more advanced time series models. Such exploration work will not be performed here as this model was merely an example of what can be done with the term time series that were generated.
+The individual and no-exogenous models performed similarly, with a slight edge to the individual models. The aggregated models performed best in both measures (\(RMSE\) and \(directional correctness\)). Although there is a definitive improvement from the no-exogenous models to their exogenous counterparts, no model has showed significant tradeability potential.
 
 \par
-The directional correctness ratio indicator showed a variation between \(35\%\) and \(63\%\) correctness, with an average of \(49.9\%\) and variance of \(0.44\%\). This indicates that the predictions made by the model were no better than random and that using this model with the term time series is not directly translatable into winning trading strategies.
+The \textit{ARIMAX} model turned out to be a poor predictor of the stock series, failing to fit the data exceptionally well. It would be interesting to analyse the same dataset with a collection of more advanced time series models. Such exploration work will not be performed here as this model was merely an example of what can be done with the generated term time series, and also to compare its performance against that of the no-exogenous model.
 
 \par
-The best directional correctness results were for the stock symbols \textit{KO} (Coca-Cola Co.) and \textit{PFE} (Pfizer Inc.)  with \(35\%\) and \(63\%\) correctness respectively. Inverting the directional predictions of Coca-Cola Co. would yield a correctness rate of \(65\%\), slightly better than Pfizer. Although \(65\%\) is not close to the random indicator of \(50\%\) it is not sufficiently far enough to be confident that his results were not random (likely driven by the current trend these particular stocks were under at the testing time interval).
- 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=2.5in]{dir_corr_line}
-\caption{Directional correctness ratio of forecasts}
-\label{fig:dir_corr_line}
-\end{figure}
+The directional correctness ratio indicator showed a variation between \(35\%\) and \(63\%\) correctness, with an average of \(49.9\%\) and variance of \(0.43\%\). This result, coupled with a simple t-test (with \(5\%\) significance) indicates that the predictions made by the model are no better than random and that using this model with the term time series is not directly translatable into winning trading strategies. Figure~\ref{fig:dir_corr_hist} plots the directional correctness binned frequencies and it shows quite clearly the aggregate models' superiority if compared to the individual and no-exogenous models.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=2.5in]{dir_corr_hist}
+\includegraphics[width=3.5in]{dir_corr_hist}
 \caption{Directional correctness ratio of forecasts binned frequencies}
 \label{fig:dir_corr_hist}
 \end{figure}
 
 \par
-The root mean square error measure was taken mostly to compare if the individual term time series fair better than the aggregated terms time series for a given stock. The results in this area show that in general, the aggregated model fairs better than the individual model which shows that modelling all the terms related to a stock into the same model is more advantageous than modelling the terms individually. The descriptive statistics of this indicator can seen in table~\ref{tab:1} and figure~\ref{fig:rmse_line}.
+The best directional correctness results were for the stock symbols \textit{KO} (Coca-Cola Co., using exogenous series from term \textit{``money''}) and \textit{PFE} (Pfizer Inc., using exogenous series from term \textit{``quarter''}) with \(35\%\) and \(63\%\) correctness respectively. Inverting the directional predictions of Coca-Cola Co. would yield a correctness rate of \(65\%\), becoming slightly better than Pfizer's.
+
+\par
+The root mean square error measure allows for a direct comparison between the individual, aggregated and no-exogenous models. The results in this area corroborate the directional correctness results, showing that in general, the aggregated model fairs better than the individual and no-exogenous models. This clearly indicates that using all available information is more advantageous than modelling the terms individually and also than not using the term time series at all. The descriptive statistics of this indicator can seen in table~\ref{tab:1} and figure~\ref{fig:rmse_line}.
 
 \begin{table}
 \caption{Root mean square error}
 \label{tab:1}
 \begin{tabular}{ r c c c c c }
-           & Obs & Min & Max & \(\mu\) & \(\sigma^2\) \\
-  All & 200 & 0.035 & 0.598 & 0.165 & 0.014 \\ 
-  Individual & 173 & 0.035 & 0.598 & 0.169 & 0.169 \\
-  Aggregated & 27  & 0.056 & 0.322 & 0.138 & 0.006 \\
+             & Obs   & Min   & Max   & \(\mu\) & \(\sigma^2\) \\
+All          & 219   & 0.035 & 0.584 & 0.148   & 0.007 \\ 
+Individual   & 165   & 0.043 & 0.583 & 0.148   & 0.007 \\
+Aggregated   & 26    & 0.056 & 0.322 & 0.141   & 0.006 \\
+No-exogenous & 28    & 0.035 & 0.584 & 0.153   & 0.012 \\
 \end{tabular}
 \end{table}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=2.5in]{rmse_line}
-\caption{Root mean square error for all stock, term individual and aggregated tuples}
+\caption{Root mean square error for individual, aggregated and no-exogenous models}
 \label{fig:rmse_line}
 \end{figure}
-
 
 \par
 For more detailed information, the complete research, code and results can be found at \url{https://github.com/magrossi/news_n_stocks}.
 
 \section{Conclusion}
-Using public and free data sources, a different approach of relating textual data and stock price movements is introduced by generating term time series data pragmatically from TFIDF scores. This novel technique allows for a fully contextualized analysis of  textual and stock data, and eliminates the cumbersomeness of dealing with textual data directly.
+Using public and free data sources, a different approach of relating textual data and stock price movements is introduced by generating term time series data pragmatically from \(TFIDF\) scores. This novel technique allows for a fully contextualized analysis of  textual and stock data, and eliminates the cumbersomeness of dealing with textual data directly.
 
 \par
-A very simple validation model for the ability of the generated term time series to predict the stock price movement was tested and although it did not show promising results, other more advanced models can be tested in the future, and the term time series data can serve as input for other investment frameworks.
+A very simple validation model for the ability of the generated term time series to forecast stock price movements was tested and although it did not show direct tradeability capabilities, it clearly indicated that modelling stock prices using all related term time series is more advantageous and should encourage investors to use textual information in their predicting models to increase the quality of their output trading signals.
 
 \par
 Some caveats are important to be mentioned. Using a larger dataset, that spanned multiple years and sourced from different providers, would help offset potential editorial biases and increase variance. Also, if both the time and date of publishing were available for each news article, an equivalent intra-day research could show different insights into news and stock relationship.
 
 \par
-Future research may include repeating this same experiments using different textual filtering options, such as capturing only nouns or named entities from the textual corpus to avoid some of the more peculiar results founds here. Another avenue of study can be to compare the effectiveness of different news sources; or build a directed term to stock graph and procure unknown relationships between stocks of different sectors or with weak intuitive relationships. Experimenting with different time series models such as transfer models, VAR, VECM, and others, then compare results can also be a very interesting path to pursue.
+Future research may include repeating this same experiments using different textual filtering options, such as capturing only nouns or named entities from the textual corpus to avoid some of the more peculiar results founds here. Another avenue of study can be to compare the effectiveness of different news sources; or build a directed term to stock graph and procure unknown relationships between stocks of different sectors or with weak intuitive relationships. Experimenting with different time series models such as transfer models, VAR, VECM, and others, then compare results can also be a very interesting research path.
 
 \bibliography{IEEEabrv,practicum_marcelo_grossi}
 
