@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.7.25)  16 AUG 2016 22:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.7.25)  18 AUG 2016 00:26
 entering extended mode
 **practicum_marcelo_grossi.tex
 (practicum_marcelo_grossi.tex
@@ -392,53 +392,57 @@ LaTeX Info: Redefining \nameref on input line 17.
 \makeMPintoPDFobject=\count128
 \everyMPtoPDFconversion=\toks22
 )
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 44.
+Missing character: There is no Ã in font ptmr7t!
+Missing character: There is no ³ in font ptmr7t!
  [1{C:/Users/Marcelo/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
 ]
-[2] <force_20140814_small.png, id=86, 216.05719pt x 226.59656pt>
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 48.
+
+[2] <force_20140814_small.png, id=84, 216.05719pt x 226.59656pt>
 File: force_20140814_small.png Graphic file (type png)
 
 <use force_20140814_small.png>
-Package pdftex.def Info: force_20140814_small.png used on input line 102.
+Package pdftex.def Info: force_20140814_small.png used on input line 116.
 (pdftex.def)             Requested size: 180.67499pt x 189.49614pt.
+ [3 <./force_20140814_small.png>]
+Underfull \hbox (badness 1412) in paragraph at lines 162--164
+\OT1/ptm/m/n/11 FROM THIS?> The tu-ples gen-er-ated for \OT1/ptm/m/it/11 Grange
+r-
+ []
 
-Underfull \vbox (badness 1308) has occurred while \output is active []
-
- [3 <./force_20140814_small.png>] <dir_corr_hist.png, id=105, 380.42125pt x 272
-.01625pt>
+[4] <dir_corr_hist.png, id=110, 380.42125pt x 272.01625pt>
 File: dir_corr_hist.png Graphic file (type png)
 
 <use dir_corr_hist.png>
-Package pdftex.def Info: dir_corr_hist.png used on input line 157.
+Package pdftex.def Info: dir_corr_hist.png used on input line 179.
 (pdftex.def)             Requested size: 252.94499pt x 180.87192pt.
 
-Overfull \hbox (0.94499pt too wide) in paragraph at lines 157--158
+Overfull \hbox (0.94499pt too wide) in paragraph at lines 179--180
  [][] 
  []
 
-[4 <./dir_corr_hist.png>] <rmse_line.png, id=116, 372.39125pt x 247.92625pt>
+<rmse_line.png, id=114, 372.39125pt x 247.92625pt>
 File: rmse_line.png Graphic file (type png)
-
-<use rmse_line.png>
-Package pdftex.def Info: rmse_line.png used on input line 182.
+ <use rmse_line.png>
+Package pdftex.def Info: rmse_line.png used on input line 204.
 (pdftex.def)             Requested size: 180.67499pt x 120.28947pt.
- (practicum_marcelo_grossi.bbl
+ [5 <./dir_corr_hist.png> <./rmse_line.png>] (practicum_marcelo_grossi.bbl
 Missing character: There is no Ã in font ptmr7t!
 Missing character: There is no ³ in font ptmr7t!
- [5 <./rmse_line.png>]
-Underfull \hbox (badness 2012) in paragraph at lines 72--75
+
+Underfull \hbox (badness 2012) in paragraph at lines 68--71
 []\OT1/ptm/m/n/11 C. Granger, ``In-ves-ti-gat-ing causal re-la-tions by
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 90--93
+Underfull \hbox (badness 10000) in paragraph at lines 86--89
 []\OT1/ptm/m/n/11 D. Giles, ``Test-ing for granger causal-ity,''
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 90--93
+Underfull \hbox (badness 10000) in paragraph at lines 86--89
 []$\OT1/ptm/m/n/11 http : / / davegiles . blogspot . co . uk / 2011 / 04 /$
  []
 
@@ -454,27 +458,25 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 204.
-[6
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 204.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 226.
+[6]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 226.
  (practicum_marcelo_grossi.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 204.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 204.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 226.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 226.
 Package rerunfilecheck Info: File `practicum_marcelo_grossi.out' has not change
 d.
 (rerunfilecheck)             Checksum: 5FB34AAA062AB1FF48C8A20BED87C9CF;369.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 204.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 226.
  ) 
 Here is how much of TeX's memory you used:
  7345 strings out of 493636
- 111525 string characters out of 3143750
- 210592 words of memory out of 3000000
+ 111505 string characters out of 3143750
+ 207592 words of memory out of 3000000
  10639 multiletter control sequences out of 15000+200000
  41938 words of font info for 83 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
- 33i,12n,28p,1275b,449s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 33i,12n,28p,1107b,326s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program File
 s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Program Files/MiKTeX 2.9/font
@@ -488,7 +490,7 @@ iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9
 /fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/
 times/utmbi8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb
 ><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on practicum_marcelo_grossi.pdf (6 pages, 232712 bytes).
+Output written on practicum_marcelo_grossi.pdf (6 pages, 235270 bytes).
 PDF statistics:
  191 PDF objects out of 1000 (max. 8388607)
  40 named destinations out of 1000 (max. 500000)
